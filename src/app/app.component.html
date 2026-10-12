@@ -1,0 +1,207 @@
+<div class="portfolio-shell">
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Mohamed Naleem, back to top">MN</a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#about"><span>ABOUT</span><span aria-hidden="true">ABOUT</span></a>
+      <a href="#work"><span>WORK</span><span aria-hidden="true">WORK</span></a>
+      <a href="#contact"><span>CONTACT</span><span aria-hidden="true">CONTACT</span></a>
+    </nav>
+  </header>
+
+  <a class="resume-rail" [href]="'mailto:' + email + '?subject=Resume%20request'" aria-label="Email me to request my resume">
+    <span>RESUME</span><svg lucideArrowUpRight size="15"></svg>
+  </a>
+
+  <main id="top">
+    <section class="hero" id="about" aria-labelledby="hero-title">
+      <div class="hero-glow hero-glow-one"></div>
+      <div class="hero-glow hero-glow-two"></div>
+      <div class="hero-content">
+        <p class="hero-greeting">HELLO, I’M</p>
+        <h1 id="hero-title">MOHAMED NALEEM</h1>
+        <p class="hero-role">SENIOR SOFTWARE DEVELOPER <span>·</span> ANGULAR SPECIALIST</p>
+
+        <div class="portrait-stage" role="img" aria-label="Mohamed Naleem monogram in a digital illustration">
+          <div class="portrait-orbit orbit-outer"></div>
+          <div class="portrait-orbit orbit-inner"></div>
+          <div class="portrait-glow"></div>
+          <div class="portrait-card">
+            <span class="portrait-corner corner-top"></span>
+            <span class="portrait-corner corner-bottom"></span>
+            <span class="portrait-initials">MN</span>
+            <span class="portrait-caption">DESIGNING & BUILDING FOR THE WEB</span>
+          </div>
+          <span class="float-label label-angular"><i>A</i> ANGULAR</span>
+          <span class="float-label label-years">10+ <small>YEARS IN TECH</small></span>
+          <span class="float-label label-react">REACT <i>·</i> SQL</span>
+          <span class="portrait-scroll"><i></i> SCROLL TO EXPLORE</span>
+        </div>
+
+        <p class="hero-summary">Turning complex workflows into clear, dependable digital experiences.</p>
+        <a class="hero-cta" href="#work">EXPLORE MY WORK <svg lucideArrowUpRight size="16"></svg></a>
+      </div>
+      <div class="hero-bottomline"><span>CHENNAI, INDIA</span><span>ANGULAR · REACT · TYPESCRIPT · SQL</span></div>
+    </section>
+
+    <section class="intro-section content-wrap section-pad" aria-labelledby="intro-title">
+      <div class="section-label"><span>01</span> A LITTLE ABOUT ME</div>
+      <div class="intro-grid">
+        <h2 id="intro-title">A decade of building<br><em>things that work.</em></h2>
+        <div class="intro-copy">
+          <p>I’m a senior software developer and technical lead with 10+ years of experience building web applications. Angular is my core strength; I also bring two years of React experience and work across TypeScript, SQL, and full-stack product development.</p>
+          <p>From healthcare applications to customer-facing eCommerce, I enjoy making complex ideas easier to use—and helping teams ship thoughtful, reliable software.</p>
+          <a class="inline-link" href="#experience">MORE ABOUT MY JOURNEY <svg lucideArrowUpRight size="14"></svg></a>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div><strong>10<span>+</span></strong><small>YEARS IN SOFTWARE</small></div>
+        <div><strong>4</strong><small>COMPANIES & TEAMS</small></div>
+        <div><strong>Angular</strong><small>CORE SPECIALTY</small></div>
+        <div><strong>React</strong><small>2 YEARS’ EXPERIENCE</small></div>
+      </div>
+    </section>
+
+    <section class="work-section section-pad" id="work" aria-labelledby="work-title">
+      <div class="content-wrap">
+        <div class="section-label"><span>02</span> SELECTED WORK</div>
+        <div class="section-heading">
+          <h2 id="work-title">A few things<br><em>I’ve helped build.</em></h2>
+          <p>Experience-led snapshots of products and teams I’ve contributed to. Client projects are described at a high level.</p>
+        </div>
+        <div class="project-grid">
+          @for (project of projects; track project.name; let index = $index) {
+            <article class="project-card">
+              <div class="project-visual" [class]="'project-visual ' + project.theme">
+                <div class="visual-topline"><span>PROJECT / 0{{ index + 1 }}</span><span>{{ project.initials }}</span></div>
+                <div class="visual-interface" aria-hidden="true">
+                  <div class="interface-sidebar"><b>{{ project.initials }}</b><i></i><i></i><i></i></div>
+                  <div class="interface-main">
+                    <div class="interface-heading"><span></span><i></i></div>
+                    <div class="interface-cards"><i></i><i></i><i></i></div>
+                    <div class="interface-chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                  </div>
+                </div>
+                <span class="visual-index">0{{ index + 1 }}</span>
+              </div>
+              <div class="project-info">
+                <p class="project-category">{{ project.category }}</p>
+                <h3>{{ project.name }}</h3>
+                <p class="project-description">{{ project.description }}</p>
+                <p class="project-contribution">{{ project.contribution }}</p>
+                <div class="tag-list">
+                  @for (technology of project.technologies; track technology) {
+                    <span class="tag">{{ technology }}</span>
+                  }
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+        <p class="work-note"><svg lucideSparkles size="15"></svg> These are professional experience summaries—not public project demos.</p>
+      </div>
+    </section>
+
+    <section class="experience-section section-pad" id="experience" aria-labelledby="experience-title">
+      <div class="content-wrap">
+        <div class="section-label"><span>03</span> CAREER & EXPERIENCE</div>
+        <div class="section-heading">
+          <h2 id="experience-title">Always learning.<br><em>Always building.</em></h2>
+          <p>Growing from hands-on UI development into front-end technical leadership over more than a decade.</p>
+        </div>
+        <div class="timeline">
+          @for (job of experiences; track job.company) {
+            <article class="timeline-item">
+              <div class="timeline-date">{{ job.dates }}</div>
+              <div class="timeline-marker"><i></i></div>
+              <div class="timeline-content">
+                <div class="role-heading">
+                  <div>
+                    <h3>{{ job.role }}</h3>
+                    <p class="company-name">{{ job.company }}@if (job.context) { <span> · {{ job.context }}</span> }</p>
+                  </div>
+                  <svg lucideBriefcaseBusiness size="18"></svg>
+                </div>
+                <p class="role-summary">{{ job.summary }}</p>
+                <div class="tag-list">
+                  @for (technology of job.technologies; track technology) {
+                    <span class="tag">{{ technology }}</span>
+                  }
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="skills-section section-pad" id="toolkit" aria-labelledby="skills-title">
+      <div class="content-wrap">
+        <div class="section-label"><span>04</span> TOOLKIT & TECHNOLOGIES</div>
+        <div class="section-heading">
+          <h2 id="skills-title">The tools behind<br><em>the work.</em></h2>
+          <p>Deep Angular experience, practical React skills, and a broad toolkit for building and delivering full-stack products.</p>
+        </div>
+        <div class="skill-groups">
+          @for (group of skillGroups; track group.title; let index = $index) {
+            <article class="skill-group">
+              <span class="skill-index">0{{ index + 1 }}</span>
+              <span class="skill-icon">
+                @if (index === 0) { <svg lucideCode size="20"></svg> }
+                @else if (index === 1) { <svg lucideLayers size="20"></svg> }
+                @else { <svg lucideDatabase size="20"></svg> }
+              </span>
+              <h3>{{ group.title }}</h3>
+              <p>{{ group.summary }}</p>
+              <div class="tag-list">
+                @for (skill of group.skills; track skill) {
+                  <span class="tag">{{ skill }}</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="education-section section-pad" aria-labelledby="education-title">
+      <div class="content-wrap education-grid">
+        <div>
+          <div class="section-label"><span>05</span> EDUCATION & GROWTH</div>
+          <h2 id="education-title">The foundation<br><em>and what’s next.</em></h2>
+        </div>
+        <div class="education-content">
+          <article class="education-card">
+            <svg lucideGraduationCap size="21"></svg>
+            <div><span>2009 — 2013</span><h3>Bachelor of Engineering</h3><p>Electrical and Electronics Engineering · Adhiyamaan College of Engineering</p></div>
+            <strong>8.12 <small>CGPA</small></strong>
+          </article>
+          <div class="courses-block">
+            <h3>ALWAYS LEARNING</h3>
+            <div class="tag-list">
+              @for (course of courses; track course) {
+                <span class="tag">{{ course }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section section-pad" id="contact" aria-labelledby="contact-title">
+      <div class="content-wrap contact-card">
+        <div class="contact-glow"></div>
+        <div class="section-label"><span>06</span> YOUR NEXT TEAMMATE?</div>
+        <h2 id="contact-title">Let’s build something<br><em>worth using.</em></h2>
+        <p>Open to conversations about interesting products, good teams, and new opportunities.</p>
+        <a class="contact-button" [href]="'mailto:' + email">GET IN TOUCH <svg lucideMail size="16"></svg></a>
+        <span class="contact-signoff">MOHAMED NALEEM · CHENNAI, INDIA</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer content-wrap">
+    <a class="footer-mark" href="#top">MN<span>.</span></a>
+    <p>DESIGNED & DEVELOPED WITH ANGULAR, TYPESCRIPT & SCSS.</p>
+    <div><a [href]="'mailto:' + email" aria-label="Email Mohamed"><svg lucideMail size="16"></svg></a><a [href]="linkedinUrl" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">IN</a><span>© {{ currentYear }}</span></div>
+  </footer>
+</div>
