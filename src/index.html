@@ -10,16 +10,26 @@
   <meta property="og:description" content="12+ years building enterprise web applications with Angular, React, Node.js, MongoDB, and Oracle.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mohamednaleem.github.io/naleem_portfolio/">
+  <meta property="og:image" content="https://mohamednaleem.github.io/naleem_portfolio/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mohamed Naleem | Senior Full Stack Developer">
+  <meta name="twitter:description" content="12+ years building enterprise web applications with Angular, React, Node.js, MongoDB, and Oracle.">
+  <meta name="twitter:image" content="https://mohamednaleem.github.io/naleem_portfolio/og-image.png">
   <link rel="canonical" href="https://mohamednaleem.github.io/naleem_portfolio/">
-  <meta name="theme-color" content="#09080d">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#f8f6fc">
   <script>
-    // Apply the saved or system theme before first paint to avoid a flash.
+    // Apply the saved theme (light by default) before first paint to avoid a flash.
     (function () {
-      var theme = 'dark';
+      var theme = 'light';
       try {
         var saved = localStorage.getItem('naleem.theme');
         if (saved === 'light' || saved === 'dark') { theme = saved; }
-        else if (window.matchMedia('(prefers-color-scheme: light)').matches) { theme = 'light'; }
       } catch (e) { /* storage unavailable: keep default */ }
       document.documentElement.setAttribute('data-theme', theme);
     })();

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mohamednaleem.github.io/naleem_portfolio/sitemap.xml

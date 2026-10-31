@@ -12,6 +12,9 @@
   </nav>
 
   <div class="header-actions">
+    <button type="button" class="palette-trigger" (click)="openPalette()" aria-label="Open command palette (Ctrl+K)">
+      <svg lucideSearch size="15"></svg><span>Search</span><kbd>Ctrl K</kbd>
+    </button>
     <button type="button" class="icon-button theme-toggle" (click)="toggleTheme()"
             [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
             [attr.title]="theme() === 'dark' ? 'Light mode' : 'Dark mode'">
@@ -34,6 +37,7 @@
       <small>0{{ index + 1 }}</small>{{ link.label }}
     </a>
   }
+  <button type="button" class="mobile-menu-search" (click)="openPalette()"><svg lucideSearch size="15"></svg> Search &amp; quick actions</button>
   <a class="mobile-menu-cta" [href]="resumeUrl" download (click)="closeMenu()">DOWNLOAD CV <svg lucideDownload size="15"></svg></a>
 </nav>
 
@@ -104,7 +108,19 @@
     <section class="intro-section content-wrap section-pad" id="intro" aria-labelledby="intro-title">
       <div class="section-label reveal"><span>01</span> A LITTLE ABOUT ME</div>
       <div class="intro-grid">
-        <h2 id="intro-title" class="reveal">Twelve years of building<br><em>things that work.</em></h2>
+        <div class="intro-lead">
+          <h2 id="intro-title" class="reveal">Twelve years of building<br><em>things that work.</em></h2>
+          <div class="about-card card reveal">
+            <span class="avatar">
+              @if (photoUrl) { <img [src]="photoUrl" alt="Portrait of Mohamed Naleem" width="72" height="72" loading="lazy"> } @else { MN }
+            </span>
+            <div>
+              <strong>Mohamed Naleem</strong>
+              <span>Senior Full Stack Developer</span>
+              <small><svg lucideMapPin size="13"></svg> Chennai, India <i></i> Open to opportunities</small>
+            </div>
+          </div>
+        </div>
         <div class="intro-copy reveal">
           <p>I’m a Senior Full Stack Developer with 12+ years of experience across front-end, full-stack, and API development. I build responsive enterprise web applications, REST APIs, dashboards, and customer-facing portals with Angular, React.js, TypeScript, Node.js, Express.js, MongoDB, and Oracle.</p>
           <p>Today I work as a MERN stack developer at Cognizant on <strong>DLL One Source</strong>, a banking application, shipping through Azure DevOps CI/CD with GitHub Copilot-assisted development. Before that, I led front-end delivery for Abbott’s healthcare platforms as a Technical Lead at HCL.</p>
@@ -169,13 +185,77 @@
             </article>
           }
         </div>
-        <p class="work-note"><svg lucideSparkles size="15"></svg> These are professional experience summaries—not public project demos.</p>
+        <p class="work-note"><svg lucideSparkles size="15"></svg> These are professional experience summaries—not public project demos. See the case studies and live lab below.</p>
+      </div>
+    </section>
+
+    <section class="case-section section-pad" id="case-studies" aria-labelledby="case-title">
+      <div class="content-wrap">
+        <div class="section-label reveal"><span>03</span> CASE STUDIES</div>
+        <div class="section-heading reveal">
+          <h2 id="case-title">How I approach<br><em>real problems.</em></h2>
+          <p>Two projects told end to end: the challenge, my role, how I approached it, and what it delivered.</p>
+        </div>
+        <div class="case-list">
+          @for (study of caseStudies; track study.id; let index = $index) {
+            <details class="case-card card reveal" [open]="index === 0">
+              <summary>
+                <div class="case-meta"><span>{{ study.client }}</span><span>{{ study.period }}</span></div>
+                <h3>{{ study.title }}</h3>
+                <div class="case-summary-foot">
+                  <span class="case-role">{{ study.role }}</span>
+                  <span class="case-toggle" aria-hidden="true"><svg lucideChevronDown size="18"></svg></span>
+                </div>
+              </summary>
+              <div class="case-body">
+                <div class="case-flow" aria-label="Architecture overview">
+                  @for (step of study.flow; track step; let last = $last) {
+                    <span>{{ step }}</span>@if (!last) { <i aria-hidden="true"></i> }
+                  }
+                </div>
+                <div class="case-grid">
+                  <div class="case-block">
+                    <h4><svg lucideTarget size="16"></svg> The challenge</h4>
+                    <p>{{ study.challenge }}</p>
+                  </div>
+                  <div class="case-block">
+                    <h4><svg lucideLightbulb size="16"></svg> My approach</h4>
+                    <ul class="check-list">
+                      @for (item of study.approach; track item) { <li><svg lucideCircleCheck size="15"></svg><span>{{ item }}</span></li> }
+                    </ul>
+                  </div>
+                  <div class="case-block">
+                    <h4><svg lucideTrendingUp size="16"></svg> What it delivered</h4>
+                    <ul class="check-list">
+                      @for (item of study.outcomes; track item) { <li><svg lucideCircleCheck size="15"></svg><span>{{ item }}</span></li> }
+                    </ul>
+                  </div>
+                </div>
+                <div class="tag-list">
+                  @for (tech of study.stack; track tech) { <span class="tag">{{ tech }}</span> }
+                </div>
+              </div>
+            </details>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="labs-section section-pad" id="labs" aria-labelledby="labs-title">
+      <div class="content-wrap">
+        <div class="section-label reveal"><span>04</span> LABS · LIVE DEMO</div>
+        <div class="section-heading reveal">
+          <h2 id="labs-title">Try it,<br><em>don’t just read it.</em></h2>
+          <p>A heart-failure remote-monitoring dashboard inspired by my Abbott HF work — switch patients, change the alert rule, and watch the charts react. Built with Angular signals.</p>
+        </div>
+        <app-heart-monitor class="reveal"></app-heart-monitor>
+        <p class="work-note"><svg lucideFlaskConical size="15"></svg> Open source — <a [href]="labSourceUrl" target="_blank" rel="noopener noreferrer">view the code on GitHub</a>.</p>
       </div>
     </section>
 
     <section class="experience-section section-pad" id="experience" aria-labelledby="experience-title">
       <div class="content-wrap">
-        <div class="section-label reveal"><span>03</span> CAREER &amp; EXPERIENCE</div>
+        <div class="section-label reveal"><span>05</span> CAREER &amp; EXPERIENCE</div>
         <div class="section-heading reveal">
           <h2 id="experience-title">Always learning.<br><em>Always building.</em></h2>
           <p>From UI developer to technical lead to full-stack engineer—twelve years of growing scope, ownership, and impact.</p>
@@ -217,7 +297,7 @@
 
     <section class="skills-section section-pad" id="toolkit" aria-labelledby="skills-title">
       <div class="content-wrap">
-        <div class="section-label reveal"><span>04</span> TOOLKIT &amp; TECHNOLOGIES</div>
+        <div class="section-label reveal"><span>06</span> TOOLKIT &amp; TECHNOLOGIES</div>
         <div class="section-heading reveal">
           <h2 id="skills-title">The tools behind<br><em>the work.</em></h2>
           <p>Deep Angular and React experience, backed by Node.js APIs, relational and document databases, and modern delivery tooling.</p>
@@ -251,7 +331,7 @@
 
     <section class="domains-section section-pad" id="domains" aria-labelledby="domains-title">
       <div class="content-wrap">
-        <div class="section-label reveal"><span>05</span> DOMAINS &amp; AI-NATIVE ENGINEERING</div>
+        <div class="section-label reveal"><span>07</span> DOMAINS &amp; AI-NATIVE ENGINEERING</div>
         <div class="section-heading reveal">
           <h2 id="domains-title">Industries I know.<br><em>Where I’m heading.</em></h2>
           <p>Hands-on delivery in four regulated and enterprise domains, with a growing focus on AI-assisted software engineering.</p>
@@ -293,7 +373,7 @@
     <section class="education-section section-pad" id="education" aria-labelledby="education-title">
       <div class="content-wrap education-grid">
         <div class="education-intro reveal">
-          <div class="section-label"><span>06</span> EDUCATION &amp; GROWTH</div>
+          <div class="section-label"><span>08</span> EDUCATION &amp; GROWTH</div>
           <h2 id="education-title">The foundation<br><em>and what’s next.</em></h2>
         </div>
         <div class="education-content">
@@ -330,10 +410,56 @@
       </div>
     </section>
 
+    <section class="notes-section section-pad" id="notes" aria-labelledby="notes-title">
+      <div class="content-wrap">
+        <div class="section-label reveal"><span>09</span> ENGINEERING NOTES</div>
+        <div class="section-heading reveal">
+          <h2 id="notes-title">Things I’ve<br><em>learned along the way.</em></h2>
+          <p>Short, practical notes from day-to-day engineering — the kind of details I enjoy discussing in interviews.</p>
+        </div>
+        <div class="notes-grid">
+          @for (note of notes; track note.title; let index = $index) {
+            <details class="note-card card reveal" [style.--reveal-delay]="(index % 2) * 100 + 'ms'">
+              <summary>
+                <span class="note-tag"><svg lucideBookOpen size="13"></svg> {{ note.tag }}</span>
+                <h3>{{ note.title }}</h3>
+                <p>{{ note.summary }}</p>
+                <span class="note-more">Read note <svg lucideChevronDown size="15"></svg></span>
+              </summary>
+              <ul class="check-list">
+                @for (point of note.points; track point) { <li><svg lucideCircleCheck size="15"></svg><span>{{ point }}</span></li> }
+              </ul>
+              @if (note.code) { <pre class="note-code"><code>{{ note.code }}</code></pre> }
+            </details>
+          }
+        </div>
+      </div>
+    </section>
+
+    @if (testimonials.length) {
+      <section class="testimonials-section section-pad" id="testimonials" aria-labelledby="testimonials-title">
+        <div class="content-wrap">
+          <div class="section-label reveal"><span>10</span> KIND WORDS</div>
+          <div class="section-heading reveal">
+            <h2 id="testimonials-title">What people<br><em>say about working with me.</em></h2>
+          </div>
+          <div class="testimonial-grid">
+            @for (item of testimonials; track item.name) {
+              <figure class="testimonial card reveal">
+                <svg lucideQuote size="22"></svg>
+                <blockquote>{{ item.quote }}</blockquote>
+                <figcaption><strong>{{ item.name }}</strong><span>{{ item.title }}</span></figcaption>
+              </figure>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
     <section class="contact-section section-pad" id="contact" aria-labelledby="contact-title">
       <div class="content-wrap contact-card reveal">
         <div class="contact-glow"></div>
-        <div class="section-label"><span>07</span> YOUR NEXT TEAMMATE?</div>
+        <div class="section-label"><span>{{ testimonials.length ? '11' : '10' }}</span> YOUR NEXT TEAMMATE?</div>
         <h2 id="contact-title">Let’s build something<br><em>worth using.</em></h2>
         <p>Open to senior full-stack and technical lead opportunities. I’d be glad to talk about your product and team.</p>
         <div class="contact-actions">
@@ -353,6 +479,10 @@
           <li><svg lucideArrowUpRight size="15"></svg><a [href]="linkedinUrl" target="_blank" rel="noopener noreferrer">linkedin.com/in/mohamed-naleem-5b4591106</a></li>
           <li><svg lucideMapPin size="15"></svg><span>Chennai, Tamil Nadu, India</span></li>
         </ul>
+        <div class="contact-form-wrap">
+          <h3>Or send a quick message</h3>
+          <app-contact-form [email]="email" [endpoint]="formEndpoint"></app-contact-form>
+        </div>
         <span class="contact-signoff">MOHAMED NALEEM · SENIOR FULL STACK DEVELOPER</span>
       </div>
     </section>
@@ -360,7 +490,7 @@
 
   <footer class="site-footer content-wrap">
     <a class="footer-mark" href="#top">MN<span>.</span></a>
-    <p>DESIGNED &amp; DEVELOPED BY MOHAMED NALEEM WITH ANGULAR, TYPESCRIPT &amp; SCSS.</p>
+    <p>DESIGNED &amp; DEVELOPED BY MOHAMED NALEEM WITH ANGULAR &middot; <a [href]="repoUrl" target="_blank" rel="noopener noreferrer">VIEW SOURCE</a> &middot; PRESS <kbd>CTRL K</kbd></p>
     <div>
       <a [href]="'mailto:' + email" aria-label="Email Mohamed"><svg lucideMail size="16"></svg></a>
       <a [href]="linkedinUrl" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">IN</a>
@@ -379,3 +509,6 @@
 </button>
 
 <div class="toast" [class.is-visible]="!!toast()" role="status" aria-live="polite">{{ toast() }}</div>
+
+<app-assistant [(open)]="assistantOpen"></app-assistant>
+<app-command-palette [commands]="paletteCommands" [(open)]="paletteOpen"></app-command-palette>

@@ -80,4 +80,27 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('.menu-toggle')?.getAttribute('aria-expanded')).toBe('false');
     expect(compiled.querySelector('.back-to-top')).not.toBeNull();
   });
+
+  it('should open the command palette with Ctrl+K', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.paletteOpen()).toBeTrue();
+    expect((fixture.nativeElement as HTMLElement).querySelector('[role="dialog"]')).not.toBeNull();
+  });
+
+  it('should render case studies, the live lab, notes, and the contact form', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('#case-studies')).not.toBeNull();
+    expect(compiled.querySelector('app-heart-monitor')).not.toBeNull();
+    expect(compiled.querySelector('#notes')).not.toBeNull();
+    expect(compiled.querySelector('app-contact-form form')).not.toBeNull();
+    expect(compiled.querySelector('#testimonials')).toBeNull();
+  });
 });

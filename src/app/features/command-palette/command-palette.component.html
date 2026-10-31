@@ -1,0 +1,35 @@
+@if (open()) {
+  <div class="palette-backdrop" (click)="close()" aria-hidden="true"></div>
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette" (keydown)="onKeydown($event)">
+    <div class="palette-search">
+      <svg lucideSearch size="17"></svg>
+      <input #searchInput type="text" placeholder="Search sections or run a command…" autocomplete="off" spellcheck="false"
+             role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list"
+             [attr.aria-activedescendant]="results().length ? 'palette-item-' + activeIndex() : null"
+             [value]="query()" (input)="onQuery($event)">
+      <kbd>Esc</kbd>
+    </div>
+
+    <ul id="palette-list" class="palette-list" role="listbox" aria-label="Commands">
+      @for (command of results(); track command.id; let index = $index) {
+        @if (index === 0 || results()[index - 1].group !== command.group) {
+          <li class="palette-group" role="presentation">{{ command.group }}</li>
+        }
+        <li class="palette-item" role="option" [id]="'palette-item-' + index"
+            [class.is-active]="index === activeIndex()" [attr.aria-selected]="index === activeIndex()"
+            (click)="run(command)" (mouseenter)="activeIndex.set(index)">
+          <span>{{ command.label }}</span>
+          @if (command.hint) { <span class="hint">{{ command.hint }}</span> }
+        </li>
+      } @empty {
+        <li class="palette-empty" role="presentation">No results for “{{ query() }}”</li>
+      }
+    </ul>
+
+    <div class="palette-footer" aria-hidden="true">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>Enter</kbd> select</span>
+      <span><kbd>Ctrl</kbd><kbd>K</kbd> toggle</span>
+    </div>
+  </div>
+}

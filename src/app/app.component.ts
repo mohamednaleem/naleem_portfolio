@@ -42,6 +42,20 @@ import {
   LucideWorkflow,
   LucideX,
 } from '@lucide/angular';
+import {
+  LucideBookOpen,
+  LucideChevronDown,
+  LucideFlaskConical,
+  LucideLightbulb,
+  LucideQuote,
+  LucideSearch,
+  LucideTarget,
+  LucideTrendingUp,
+} from '@lucide/angular';
+import { AssistantComponent } from './features/assistant/assistant.component';
+import { CommandPaletteComponent, PaletteCommand } from './features/command-palette/command-palette.component';
+import { ContactFormComponent } from './features/contact-form/contact-form.component';
+import { HeartMonitorComponent } from './features/heart-monitor/heart-monitor.component';
 
 type Theme = 'dark' | 'light';
 type TokenKind = 'key' | 'string' | 'keyword' | 'number' | 'punct' | 'comment' | 'plain';
@@ -126,9 +140,48 @@ interface Domain {
   detail: string;
 }
 
+interface CaseStudy {
+  id: string;
+  title: string;
+  client: string;
+  role: string;
+  period: string;
+  challenge: string;
+  approach: string[];
+  outcomes: string[];
+  flow: string[];
+  stack: string[];
+}
+
+interface Note {
+  title: string;
+  tag: string;
+  summary: string;
+  points: string[];
+  code?: string;
+}
+
+interface Testimonial {
+  quote: string;
+  name: string;
+  title: string;
+}
+
 @Component({
   selector: 'app-root',
   imports: [
+    AssistantComponent,
+    CommandPaletteComponent,
+    ContactFormComponent,
+    HeartMonitorComponent,
+    LucideBookOpen,
+    LucideChevronDown,
+    LucideFlaskConical,
+    LucideLightbulb,
+    LucideQuote,
+    LucideSearch,
+    LucideTarget,
+    LucideTrendingUp,
     LucideArrowUp,
     LucideArrowUpRight,
     LucideAward,
@@ -172,6 +225,12 @@ export class AppComponent {
 
   readonly email = 'mohamednaleem90@gmail.com';
   readonly resumeUrl = 'Mohamed_Naleem_Resume.pdf';
+  readonly repoUrl = 'https://github.com/mohamednaleem/naleem_portfolio';
+  readonly labSourceUrl = 'https://github.com/mohamednaleem/naleem_portfolio/tree/main/src/app/features/heart-monitor';
+  /** Set to e.g. 'profile.jpg' after adding the photo to public/ to show it in the About section. */
+  readonly photoUrl: string | null = null;
+  /** Set to a Formspree endpoint (https://formspree.io/f/xxxx) to receive messages without opening a mail app. */
+  readonly formEndpoint = '';
   readonly linkedinUrl = 'https://www.linkedin.com/in/mohamed-naleem-5b4591106/';
   readonly phones = [
     { label: '+91 96779 31974', href: 'tel:+919677931974' },
@@ -183,11 +242,126 @@ export class AppComponent {
   readonly navLinks = [
     { id: 'about', label: 'About' },
     { id: 'work', label: 'Work' },
+    { id: 'labs', label: 'Labs' },
     { id: 'experience', label: 'Experience' },
     { id: 'toolkit', label: 'Skills' },
-    { id: 'domains', label: 'Domains' },
     { id: 'contact', label: 'Contact' },
   ];
+
+  readonly paletteOpen = signal(false);
+  readonly assistantOpen = signal(false);
+
+  readonly paletteCommands: PaletteCommand[] = [
+    { id: 'go-about', group: 'Navigate', label: 'About', keywords: 'intro home top', run: () => this.goTo('about') },
+    { id: 'go-work', group: 'Navigate', label: 'Selected work', keywords: 'projects portfolio', run: () => this.goTo('work') },
+    { id: 'go-case', group: 'Navigate', label: 'Case studies', keywords: 'dll ehr story', run: () => this.goTo('case-studies') },
+    { id: 'go-labs', group: 'Navigate', label: 'Labs · Heart-failure monitoring demo', keywords: 'demo live healthcare abbott chart', run: () => this.goTo('labs') },
+    { id: 'go-experience', group: 'Navigate', label: 'Experience', keywords: 'career timeline jobs', run: () => this.goTo('experience') },
+    { id: 'go-skills', group: 'Navigate', label: 'Skills & toolkit', keywords: 'tech stack', run: () => this.goTo('toolkit') },
+    { id: 'go-domains', group: 'Navigate', label: 'Domains & AI', keywords: 'industries copilot', run: () => this.goTo('domains') },
+    { id: 'go-education', group: 'Navigate', label: 'Education', keywords: 'degree certification', run: () => this.goTo('education') },
+    { id: 'go-notes', group: 'Navigate', label: 'Engineering notes', keywords: 'blog til learned', run: () => this.goTo('notes') },
+    { id: 'go-contact', group: 'Navigate', label: 'Contact', keywords: 'hire message', run: () => this.goTo('contact') },
+    { id: 'cv', group: 'Actions', label: 'Download CV (PDF)', keywords: 'resume', run: () => this.downloadResume() },
+    { id: 'ask', group: 'Actions', label: 'Ask the assistant about me', keywords: 'chat ai bot', run: () => this.assistantOpen.set(true) },
+    { id: 'theme', group: 'Actions', label: 'Toggle light / dark theme', keywords: 'mode appearance', run: () => this.toggleTheme() },
+    { id: 'copy', group: 'Actions', label: 'Copy email address', hint: this.email, keywords: 'contact', run: () => void this.copyEmail() },
+    { id: 'mail', group: 'Links', label: 'Send an email', hint: this.email, run: () => this.openLink(`mailto:${this.email}`) },
+    { id: 'linkedin', group: 'Links', label: 'Open LinkedIn profile', run: () => this.openLink(this.linkedinUrl, true) },
+    { id: 'source', group: 'Links', label: 'View this site’s source on GitHub', keywords: 'code repo', run: () => this.openLink(this.repoUrl, true) },
+  ];
+
+  readonly caseStudies: CaseStudy[] = [
+    {
+      id: 'dll',
+      title: 'DLL One Source — enterprise banking workflows',
+      client: 'DLL (De Lage Landen) · Cognizant',
+      role: 'MERN Stack Developer',
+      period: '2025 — Present',
+      challenge: 'Business users rely on DLL One Source for day-to-day banking workflows. Features must stay responsive in the UI while reading and writing consistent data across both MongoDB and Oracle.',
+      approach: [
+        'Built responsive, component-driven React.js screens with TypeScript and Bootstrap.',
+        'Implemented and supported Node.js / Express.js REST APIs that integrate MongoDB and Oracle.',
+        'Wrote and optimised SQL queries and supported data validation across environments.',
+        'Used GitHub Copilot for faster scaffolding, debugging and documentation — with every suggestion reviewed.',
+      ],
+      outcomes: [
+        'Features shipped through peer-reviewed pull requests and Azure DevOps CI/CD pipelines.',
+        'Defects resolved and releases supported as part of an Agile delivery team.',
+      ],
+      flow: ['React.js UI', 'Express REST API', 'MongoDB + Oracle'],
+      stack: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Oracle', 'SQL', 'Azure DevOps', 'GitHub Copilot'],
+    },
+    {
+      id: 'ehr',
+      title: 'EMR / EHR dashboard — one portal for patient records',
+      client: 'Abbott · HCL Technologies',
+      role: 'Technical Lead',
+      period: '2022 — 2025',
+      challenge: 'Clinicians worked across several Abbott applications to reach patient information. The goal was a single, consistent view of patient records inside one portal.',
+      approach: [
+        'Designed an Angular portal that brings multiple Abbott application views together.',
+        'Managed shared state with NgRx and RxJS, and built reusable Angular Material components.',
+        'Ran requirement-clarification sessions directly with the client.',
+        'Reviewed and approved core-team code to keep quality consistent across modules.',
+      ],
+      outcomes: [
+        'A unified portal giving clinicians one place to access patient records.',
+        'Reusable modules and templates shared with the HF Cloud and DRx applications.',
+      ],
+      flow: ['Abbott apps', 'Unified Angular portal', 'Patient records'],
+      stack: ['Angular', 'NgRx', 'RxJS', 'Angular Material', 'Chart.js', 'WebSocket'],
+    },
+  ];
+
+  readonly notes: Note[] = [
+    {
+      title: 'Signals for local UI state',
+      tag: 'Angular',
+      summary: 'Why I reach for signals before subscriptions in modern Angular.',
+      points: [
+        'computed() derives values automatically — no manual subscribe / unsubscribe.',
+        'Only templates that read a signal are updated, keeping change detection cheap.',
+        'Keep RxJS for async streams and bridge with toSignal() where needed.',
+      ],
+      code: 'readonly threshold = signal(2);\nreadonly alerts = computed(() =>\n  readings().filter((r) => r.gain3d > this.threshold()));',
+    },
+    {
+      title: 'Choosing the right RxJS flattening operator',
+      tag: 'RxJS',
+      summary: 'Four operators, four very different behaviours.',
+      points: [
+        'switchMap — search / typeahead: cancel stale requests.',
+        'exhaustMap — submit buttons: ignore double clicks while saving.',
+        'concatMap — ordered writes: run requests one after another.',
+        'mergeMap — independent work that can run in parallel.',
+      ],
+    },
+    {
+      title: 'Getting real value from GitHub Copilot',
+      tag: 'AI',
+      summary: 'Habits that make AI pair-programming productive and safe.',
+      points: [
+        'State the intent first — a clear comment or signature gives better suggestions.',
+        'Treat every suggestion like a code review: logic, edge cases and security.',
+        'Lean on it for tests and boilerplate; keep design decisions human.',
+        'Never paste secrets or client data into prompts.',
+      ],
+    },
+    {
+      title: 'Keeping scroll effects smooth',
+      tag: 'Performance',
+      summary: 'Lessons from building this portfolio.',
+      points: [
+        'Run scroll listeners outside NgZone and throttle them with requestAnimationFrame.',
+        'Drive progress indicators with CSS variables instead of template bindings.',
+        'Avoid animating blurred elements — soft gradients look the same and cost far less.',
+      ],
+    },
+  ];
+
+  /** Add real quotes (with permission) to show the Testimonials section. */
+  readonly testimonials: Testimonial[] = [];
 
   readonly stats = [
     { value: '12', suffix: '+', label: 'YEARS IN SOFTWARE' },
@@ -490,6 +664,39 @@ export class AppComponent {
     this.menuOpen.set(false);
   }
 
+  @HostListener('document:keydown', ['$event'])
+  onShortcut(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      this.menuOpen.set(false);
+      this.paletteOpen.update((open) => !open);
+    }
+  }
+
+  openPalette(): void {
+    this.menuOpen.set(false);
+    this.paletteOpen.set(true);
+  }
+
+  goTo(id: string): void {
+    this.document.getElementById(id)?.scrollIntoView({ behavior: this.prefersReducedMotion() ? 'auto' : 'smooth' });
+  }
+
+  downloadResume(): void {
+    const link = this.document.createElement('a');
+    link.href = this.resumeUrl;
+    link.download = this.resumeUrl;
+    link.click();
+  }
+
+  private openLink(url: string, newTab = false): void {
+    if (newTab) {
+      this.document.defaultView?.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      this.document.location.href = url;
+    }
+  }
+
   toggleMenu(): void {
     this.menuOpen.update((open) => !open);
   }
@@ -601,7 +808,7 @@ export class AppComponent {
   }
 
   private readInitialTheme(): Theme {
-    return this.document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    return this.document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   }
 
   private applyTheme(theme: Theme): void {

@@ -1,0 +1,98 @@
+<div class="monitor card">
+  <div class="toolbar">
+    <div class="segmented" role="radiogroup" aria-label="Select a synthetic patient">
+      @for (item of scenarios; track item.id) {
+        <button type="button" role="radio" [attr.aria-checked]="scenarioId() === item.id"
+                [class.is-active]="scenarioId() === item.id" (click)="selectScenario(item.id)">
+          <strong>{{ item.label }}</strong><small>{{ item.summary }}</small>
+        </button>
+      }
+    </div>
+
+    <div class="controls">
+      <div class="range-switch" role="radiogroup" aria-label="Date range">
+        @for (days of ranges; track days) {
+          <button type="button" role="radio" [attr.aria-checked]="range() === days" [class.is-active]="range() === days" (click)="range.set(days)">{{ days }}d</button>
+        }
+      </div>
+      <label class="threshold">
+        <span>Weight-gain alert <output>&gt; {{ threshold().toFixed(1) }} kg / 3 days</output></span>
+        <input type="range" min="1" max="3" step="0.1" [value]="threshold()" (input)="onThreshold($event)" aria-label="Weight gain alert threshold in kilograms over three days">
+      </label>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi">
+      <span class="kpi-icon"><svg lucideScale size="17"></svg></span>
+      <div><small>Weight today</small><strong>{{ latest().weight }} kg</strong>
+        <em [class.up]="threeDayChange() > 0">{{ threeDayChange() > 0 ? '+' : '' }}{{ threeDayChange() }} kg in 3 days</em></div>
+    </div>
+    <div class="kpi">
+      <span class="kpi-icon"><svg lucideActivity size="17"></svg></span>
+      <div><small>Avg resting HR</small><strong>{{ averageHr() }} bpm</strong><em>last {{ range() }} days</em></div>
+    </div>
+    <div class="kpi">
+      <span class="kpi-icon"><svg lucideTriangleAlert size="17"></svg></span>
+      <div><small>Alerts in range</small><strong>{{ alertCount() }}</strong><em>threshold-based rule</em></div>
+    </div>
+    <div class="kpi status" [attr.data-status]="status()">
+      <span class="kpi-icon"><svg lucideHeartPulse size="17"></svg></span>
+      <div><small>Patient status</small><strong>{{ status() }}</strong><em>{{ scenario().summary }}</em></div>
+    </div>
+  </div>
+
+  <div class="charts">
+    <figure class="chart chart-wide">
+      <figcaption>Daily weight trend <span>{{ weightBounds().min }}–{{ weightBounds().max }} kg</span></figcaption>
+      <div class="plot">
+        <svg [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height" preserveAspectRatio="none" role="img"
+             [attr.aria-label]="'Weight over the last ' + range() + ' days with ' + alertCount() + ' alerts'">
+          <defs>
+            <linearGradient id="weightFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" class="fill-start"/>
+              <stop offset="1" class="fill-end"/>
+            </linearGradient>
+          </defs>
+          @for (line of [0.25, 0.5, 0.75]; track line) {
+            <line class="grid" x1="0" [attr.x2]="chart.width" [attr.y1]="chart.height * line" [attr.y2]="chart.height * line"></line>
+          }
+          <path class="area" [attr.d]="weightArea()"></path>
+          <path class="line" [attr.d]="weightLine()"></path>
+        </svg>
+        @for (marker of alertMarkers(); track marker.reading.day) {
+          <i class="alert-dot" [style.left.%]="marker.point[0] / chart.width * 100" [style.top.%]="marker.point[1] / chart.height * 100"
+             [attr.title]="'Alert: ' + marker.reading.weight + ' kg'"></i>
+        }
+      </div>
+      <div class="legend"><span><i class="swatch line-swatch"></i> Weight</span><span><i class="swatch alert-swatch"></i> Alert raised</span></div>
+    </figure>
+
+    <figure class="chart">
+      <figcaption>Live ECG <span class="live-badge"><i></i> LIVE</span></figcaption>
+      <div class="bpm"><svg lucideHeartPulse size="22" class="beat"></svg><strong>{{ currentBpm() }}</strong><small>bpm</small></div>
+      <svg class="ecg" [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height" preserveAspectRatio="none" role="img"
+           [attr.aria-label]="'Simulated ECG trace, heart rate ' + currentBpm() + ' beats per minute'">
+        @for (line of [0.2, 0.4, 0.6, 0.8]; track line) {
+          <line class="grid" x1="0" [attr.x2]="chart.width" [attr.y1]="chart.height * line" [attr.y2]="chart.height * line"></line>
+        }
+        <path #ecgPath class="line live-line"></path>
+      </svg>
+    </figure>
+
+    <figure class="chart">
+      <figcaption>Resting heart rate <span>per day</span></figcaption>
+      <svg [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height" preserveAspectRatio="none" role="img"
+           [attr.aria-label]="'Daily resting heart rate, average ' + averageHr() + ' beats per minute'">
+        @for (bar of hrBars(); track $index) {
+          <rect class="bar" [class.high]="bar.high" [attr.x]="bar.x" [attr.y]="bar.y" [attr.width]="bar.width" [attr.height]="bar.height" rx="3">
+            <title>{{ bar.value }} bpm</title>
+          </rect>
+        }
+      </svg>
+      <div class="legend"><span><i class="swatch bar-swatch"></i> Normal</span><span><i class="swatch high-swatch"></i> Elevated (≥ {{ elevatedHr }} bpm)</span></div>
+    </figure>
+  </div>
+
+  <p class="disclaimer">Synthetic data generated in your browser for demonstration only — not medical advice and not Abbott software.</p>
+</div>

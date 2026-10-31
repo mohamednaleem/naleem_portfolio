@@ -1,0 +1,38 @@
+<button type="button" class="launcher" [class.is-open]="open()" (click)="toggle()"
+        [attr.aria-expanded]="open()" aria-controls="assistant-panel">
+  @if (open()) { <svg lucideX size="18"></svg> } @else { <svg lucideBot size="18"></svg> }
+  <span>{{ open() ? 'Close' : 'Ask about me' }}</span>
+</button>
+
+@if (open()) {
+  <section id="assistant-panel" class="panel" aria-label="Ask about Mohamed">
+    <header class="panel-head">
+      <span class="avatar"><svg lucideBot size="18"></svg></span>
+      <div>
+        <strong>Ask about Mohamed</strong>
+        <small>Answers from my CV · runs in your browser</small>
+      </div>
+    </header>
+
+    <div class="log" #log role="log" aria-live="polite">
+      @for (message of messages(); track message.id) {
+        <p class="bubble" [class.from-user]="message.from === 'user'">{{ message.text }}</p>
+      }
+      @if (thinking()) {
+        <p class="bubble typing" aria-label="Assistant is typing"><i></i><i></i><i></i></p>
+      }
+    </div>
+
+    <div class="suggestions">
+      @for (question of suggestions; track question) {
+        <button type="button" (click)="ask(question)">{{ question }}</button>
+      }
+    </div>
+
+    <form class="composer" (submit)="$event.preventDefault(); ask(draft())">
+      <input #inputBox type="text" placeholder="Ask about skills, roles, AI…" maxlength="300" autocomplete="off"
+             aria-label="Your question" [value]="draft()" (input)="onDraft($event)">
+      <button type="submit" aria-label="Send question" [disabled]="!draft().trim() || thinking()"><svg lucideSend size="16"></svg></button>
+    </form>
+  </section>
+}
