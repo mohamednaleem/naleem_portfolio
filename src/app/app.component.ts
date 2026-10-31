@@ -4,6 +4,7 @@ import {
   DestroyRef,
   ElementRef,
   HostListener,
+  NgZone,
   afterNextRender,
   computed,
   inject,
@@ -20,6 +21,7 @@ import {
   LucideCode,
   LucideCopy,
   LucideDatabase,
+  LucideDownload,
   LucideGraduationCap,
   LucideHeartPulse,
   LucideLandmark,
@@ -137,6 +139,7 @@ interface Domain {
     LucideCode,
     LucideCopy,
     LucideDatabase,
+    LucideDownload,
     LucideGraduationCap,
     LucideHeartPulse,
     LucideLandmark,
@@ -164,9 +167,11 @@ export class AppComponent {
   private readonly document = inject(DOCUMENT);
   private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly zone = inject(NgZone);
   private toastTimer?: ReturnType<typeof setTimeout>;
 
   readonly email = 'mohamednaleem90@gmail.com';
+  readonly resumeUrl = 'Mohamed_Naleem_Resume.pdf';
   readonly linkedinUrl = 'https://www.linkedin.com/in/mohamed-naleem-5b4591106/';
   readonly phones = [
     { label: '+91 96779 31974', href: 'tel:+919677931974' },
@@ -235,7 +240,6 @@ export class AppComponent {
 
   readonly theme = signal<Theme>(this.readInitialTheme());
   readonly isScrolled = signal(false);
-  readonly scrollProgress = signal(0);
   readonly showBackToTop = signal(false);
   readonly activeSection = signal('about');
   readonly menuOpen = signal(false);
@@ -468,7 +472,8 @@ export class AppComponent {
     this.applyTheme(this.theme());
 
     afterNextRender(() => {
-      this.onWindowScroll();
+      this.trackScroll();
+      this.bindPointerEffects();
       this.observeReveals();
       this.observeSections();
       this.startPhraseRotation();
@@ -478,19 +483,6 @@ export class AppComponent {
       clearTimeout(this.toastTimer);
       clearInterval(this.tabTimer);
     });
-  }
-
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
-    const view = this.document.defaultView;
-    if (!view) return;
-
-    const scrollTop = view.scrollY;
-    const scrollable = this.document.documentElement.scrollHeight - view.innerHeight;
-
-    this.isScrolled.set(scrollTop > 24);
-    this.showBackToTop.set(scrollTop > 600);
-    this.scrollProgress.set(scrollable > 0 ? Math.min(1, scrollTop / scrollable) : 0);
   }
 
   @HostListener('document:keydown.escape')
@@ -528,33 +520,84 @@ export class AppComponent {
     }
   }
 
-  onCardPointerMove(event: PointerEvent): void {
-    const card = event.currentTarget as HTMLElement;
-    const rect = card.getBoundingClientRect();
-    card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
-    card.style.setProperty('--my', `${event.clientY - rect.top}px`);
-  }
-
   selectTab(index: number): void {
     clearInterval(this.tabTimer);
     this.activeTab.set(index);
   }
 
-  onTiltMove(event: PointerEvent): void {
-    if (event.pointerType !== 'mouse' || this.prefersReducedMotion()) return;
+  // Scroll work runs outside Angular, once per frame; change detection only runs when a flag flips.
+  private trackScroll(): void {
+    const view = this.document.defaultView;
+    if (!view) return;
 
-    const stage = event.currentTarget as HTMLElement;
-    const rect = stage.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    stage.style.setProperty('--ry', `${(x * 10).toFixed(2)}deg`);
-    stage.style.setProperty('--rx', `${(-y * 8).toFixed(2)}deg`);
+    const host = this.host.nativeElement;
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const scrollTop = view.scrollY;
+      const scrollable = this.document.documentElement.scrollHeight - view.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, scrollTop / scrollable) : 0;
+      host.style.setProperty('--scroll-progress', progress.toFixed(4));
+
+      const scrolled = scrollTop > 24;
+      const showTop = scrollTop > 600;
+      if (scrolled !== this.isScrolled() || showTop !== this.showBackToTop()) {
+        this.zone.run(() => {
+          this.isScrolled.set(scrolled);
+          this.showBackToTop.set(showTop);
+        });
+      }
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = view.requestAnimationFrame(update);
+    };
+
+    this.zone.runOutsideAngular(() => view.addEventListener('scroll', onScroll, { passive: true }));
+    update();
+
+    this.destroyRef.onDestroy(() => {
+      view.removeEventListener('scroll', onScroll);
+      if (frame) view.cancelAnimationFrame(frame);
+    });
   }
 
-  onTiltLeave(event: PointerEvent): void {
-    const stage = event.currentTarget as HTMLElement;
-    stage.style.setProperty('--ry', '0deg');
-    stage.style.setProperty('--rx', '0deg');
+  // Mouse-follow effects only touch CSS variables, so they stay outside change detection.
+  private bindPointerEffects(): void {
+    const root = this.host.nativeElement;
+    const reducedMotion = this.prefersReducedMotion();
+
+    const listen = (element: HTMLElement, type: 'pointermove' | 'pointerleave', handler: (event: PointerEvent) => void) => {
+      element.addEventListener(type, handler, { passive: true });
+      this.destroyRef.onDestroy(() => element.removeEventListener(type, handler));
+    };
+
+    this.zone.runOutsideAngular(() => {
+      root.querySelectorAll<HTMLElement>('.spotlight').forEach((card) => {
+        listen(card, 'pointermove', (event) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+          card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+        });
+      });
+
+      const stage = root.querySelector<HTMLElement>('.code-stage');
+      if (!stage || reducedMotion) return;
+
+      listen(stage, 'pointermove', (event) => {
+        if (event.pointerType !== 'mouse') return;
+        const rect = stage.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        stage.style.setProperty('--ry', `${(x * 10).toFixed(2)}deg`);
+        stage.style.setProperty('--rx', `${(-y * 8).toFixed(2)}deg`);
+      });
+      listen(stage, 'pointerleave', () => {
+        stage.style.setProperty('--ry', '0deg');
+        stage.style.setProperty('--rx', '0deg');
+      });
+    });
   }
 
   private readInitialTheme(): Theme {

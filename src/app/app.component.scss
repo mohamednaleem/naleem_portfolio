@@ -62,8 +62,8 @@ section[id] { scroll-margin-top: 64px; }
     border-bottom-color: var(--border-soft);
     background: var(--header-bg);
     box-shadow: var(--shadow-sm);
-    backdrop-filter: saturate(160%) blur(16px);
-    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 }
 
@@ -167,8 +167,9 @@ section[id] { scroll-margin-top: 64px; }
   left: 0;
   height: 2px;
   background: linear-gradient(90deg, var(--accent), var(--accent-alt));
-  transform: scaleX(0);
+  transform: scaleX(var(--scroll-progress, 0));
   transform-origin: left;
+  will-change: transform;
 }
 
 .mobile-menu {
@@ -183,8 +184,8 @@ section[id] { scroll-margin-top: 64px; }
   border-bottom: 1px solid var(--border-soft);
   background: var(--header-bg);
   box-shadow: var(--shadow-lg);
-  backdrop-filter: saturate(160%) blur(16px);
-  -webkit-backdrop-filter: saturate(160%) blur(16px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
@@ -303,18 +304,16 @@ section[id] { scroll-margin-top: 64px; }
 .hero-glow {
   position: absolute;
   z-index: -1;
-  width: 380px;
-  height: 420px;
+  width: 640px;
+  height: 640px;
   border-radius: 50%;
-  background: var(--accent-glow);
-  filter: blur(120px);
+  background: radial-gradient(circle, var(--accent-glow), transparent 65%);
   opacity: .5;
   pointer-events: none;
-  animation: drift 14s ease-in-out infinite alternate;
 }
 
-.hero-glow-one { top: 18%; left: 8%; }
-.hero-glow-two { right: 8%; bottom: 4%; opacity: .35; animation-delay: -6s; }
+.hero-glow-one { top: 0; left: -8%; }
+.hero-glow-two { right: -8%; bottom: -10%; opacity: .35; }
 
 .hero-content {
   position: relative;
@@ -389,10 +388,9 @@ section[id] { scroll-margin-top: 64px; }
   &::before {
     position: absolute;
     z-index: -1;
-    inset: 8% 4%;
+    inset: -12% -10%;
     border-radius: 50%;
-    background: var(--accent-glow);
-    filter: blur(50px);
+    background: radial-gradient(ellipse, var(--accent-glow), transparent 68%);
     content: '';
   }
 }
@@ -546,11 +544,17 @@ section[id] { scroll-margin-top: 64px; }
   line-height: 1.6;
 }
 
+.rotator { display: inline-grid; text-align: left; vertical-align: bottom; }
+
 .rotating-word {
-  display: inline-block;
+  grid-area: 1 / 1;
   color: var(--accent);
   font-weight: 600;
-  animation: word-in .55s var(--ease-out) both;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .45s var(--ease-out), transform .45s var(--ease-out);
+
+  &.is-active { opacity: 1; transform: none; }
 }
 
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
@@ -816,7 +820,7 @@ h2 {
   border: 1px solid var(--tone);
   border-radius: 18px;
   opacity: 0;
-  animation: ring-out 3s ease-out infinite;
+  animation: ring-out 3s ease-out infinite paused;
 
   &.ring-delay { animation-delay: 1.5s; }
 }
@@ -841,7 +845,7 @@ h2 {
   background: repeating-linear-gradient(90deg, var(--tone) 0 5px, transparent 5px 9px);
   background-size: 18px 2px;
   opacity: .7;
-  animation: flow-dash 1s linear infinite;
+  animation: flow-dash 1s linear infinite paused;
 }
 
 .visual-watermark {
@@ -858,6 +862,7 @@ h2 {
 .project-card:hover {
   .visual-icon { transform: translateY(-3px) scale(1.06); }
   .flow-step { border-color: var(--tone); color: var(--text); }
+  .visual-ring, .flow-link { animation-play-state: running; }
 }
 
 .project-info {
@@ -1079,14 +1084,13 @@ h2 {
 
 .contact-glow {
   position: absolute;
-  top: -125px;
-  right: 5%;
-  width: 320px;
-  height: 280px;
+  top: -260px;
+  right: -6%;
+  width: 620px;
+  height: 560px;
   border-radius: 50%;
-  background: var(--accent-glow);
-  filter: blur(100px);
-  animation: drift 12s ease-in-out infinite alternate;
+  background: radial-gradient(circle, var(--accent-glow), transparent 65%);
+  pointer-events: none;
 }
 
 .contact-actions { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -1175,7 +1179,7 @@ h2 {
 
   circle { fill: none; stroke-width: 2.5; }
   .ring-track { stroke: var(--border); }
-  .ring-value { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset .15s linear; }
+  .ring-value { stroke: var(--accent); stroke-linecap: round; stroke-dashoffset: calc(131.95px * (1 - var(--scroll-progress, 0))); }
 }
 
 .toast {
@@ -1200,13 +1204,11 @@ h2 {
 
 /* ---------- Keyframes ---------- */
 @keyframes fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-@keyframes word-in { from { opacity: 0; transform: translateY(10px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes line-in { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes ring-out { 0% { opacity: .6; transform: scale(1); } 100% { opacity: 0; transform: scale(1.6); } }
 @keyframes flow-dash { to { background-position: 18px 0; } }
-@keyframes drift { from { transform: translate(0, 0); } to { transform: translate(40px, -30px); } }
 @keyframes nudge-up { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes icon-spin { from { opacity: 0; transform: rotate(-90deg) scale(.6); } to { opacity: 1; transform: none; } }
 

@@ -42,15 +42,16 @@ describe('AppComponent', () => {
     expect(content).toContain('SQL');
   });
 
-  it('should provide working resume-request, email, and LinkedIn links', () => {
+  it('should provide working resume-download, email, and LinkedIn links', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.querySelector('.contact-button')?.getAttribute('href'))
       .toBe('mailto:mohamednaleem90@gmail.com');
-    expect(compiled.querySelector('.resume-rail')?.getAttribute('href'))
-      .toContain('subject=Resume%20request');
+    const resumeLink = compiled.querySelector('.resume-rail');
+    expect(resumeLink?.getAttribute('href')).toBe('Mohamed_Naleem_Resume.pdf');
+    expect(resumeLink?.hasAttribute('download')).toBeTrue();
     expect(compiled.querySelector('a[href*="linkedin.com/in/mohamed-naleem"]'))
       .not.toBeNull();
   });

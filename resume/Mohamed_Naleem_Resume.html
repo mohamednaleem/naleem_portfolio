@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mohamed Naleem - Senior Full Stack Developer - Resume</title>
+  <!-- Source for public/Mohamed_Naleem_Resume.pdf (print with headless Chrome, A4). -->
+  <style>
+    @page { size: A4; margin: 11mm 13mm 10mm; }
+
+    :root {
+      --ink: #1d1a26;
+      --body: #3a3646;
+      --muted: #6b6578;
+      --accent: #5b30c4;
+      --accent-soft: #f1ecfc;
+      --rule: #e2dcef;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      color: var(--body);
+      background: #fff;
+      font: 9pt/1.4 'Segoe UI', Calibri, Arial, sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2.5px solid var(--accent);
+    }
+
+    .name {
+      margin: 0;
+      color: var(--ink);
+      font-size: 25pt;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      line-height: 1.05;
+    }
+
+    .title {
+      margin: 5px 0 0;
+      color: var(--accent);
+      font-size: 11pt;
+      font-weight: 600;
+      letter-spacing: .3px;
+    }
+
+    .contact {
+      display: grid;
+      gap: 2px;
+      margin: 0;
+      padding: 0;
+      color: var(--body);
+      font-size: 8.8pt;
+      list-style: none;
+      text-align: right;
+    }
+
+    .contact b { color: var(--accent); font-weight: 700; }
+
+    /* Sections */
+    section { margin-top: 10px; }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 5px;
+      color: var(--ink);
+      font-size: 10.5pt;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+    h2::after { flex: 1; height: 1px; background: var(--rule); content: ''; }
+
+    p { margin: 0; }
+
+    .summary { text-align: justify; }
+    .summary strong { color: var(--ink); }
+
+    /* Highlights strip */
+    .highlights {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .highlight {
+      padding: 5px 9px;
+      border-left: 3px solid var(--accent);
+      border-radius: 3px;
+      background: var(--accent-soft);
+    }
+
+    .highlight strong { display: block; color: var(--ink); font-size: 11pt; line-height: 1.2; }
+    .highlight span { color: var(--muted); font-size: 8pt; }
+
+    /* Skills */
+    .skills { width: 100%; border-collapse: collapse; }
+    .skills th, .skills td { padding: 2.5px 0; border-bottom: 1px solid var(--rule); vertical-align: top; text-align: left; }
+    .skills tr:last-child th, .skills tr:last-child td { border-bottom: 0; }
+    .skills th { width: 150px; padding-right: 12px; color: var(--ink); font-weight: 700; }
+
+    /* Experience */
+    .job { margin-bottom: 8px; break-inside: avoid; }
+    .job:last-child { margin-bottom: 0; }
+
+    .job-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .role { margin: 0; color: var(--ink); font-size: 10.5pt; font-weight: 700; }
+    .role span { color: var(--accent); font-weight: 600; }
+    .dates { flex: 0 0 auto; color: var(--muted); font-size: 8.8pt; font-weight: 600; white-space: nowrap; }
+    .meta { margin: 0 0 3px; color: var(--muted); font-size: 8.8pt; font-style: italic; }
+
+    ul { margin: 0; padding-left: 15px; }
+    li { margin-bottom: 1px; padding-left: 2px; }
+    li::marker { color: var(--accent); }
+
+    .tech { margin-top: 3px; color: var(--muted); font-size: 8.5pt; }
+    .tech b { color: var(--ink); font-weight: 600; }
+
+    /* Two-column blocks */
+    .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+    .columns section { break-inside: avoid; }
+
+    .domain-list { margin: 0; padding: 0; list-style: none; }
+    .domain-list li { margin-bottom: 2px; padding-left: 0; }
+    .domain-list b { color: var(--ink); }
+
+    .edu-row { display: flex; justify-content: space-between; gap: 10px; }
+    .edu-row b { color: var(--ink); }
+    .edu-sub { color: var(--muted); font-size: 8.8pt; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tags span { padding: 2px 7px; border: 1px solid var(--rule); border-radius: 10px; font-size: 8.3pt; }
+
+    .cert {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      padding: 6px 9px;
+      border: 1px solid #e9d9a8;
+      border-radius: 4px;
+      background: #fdf8ea;
+    }
+
+    .cert b { color: var(--ink); }
+    .badge { flex: 0 0 auto; padding: 1px 6px; border-radius: 8px; color: #fff; background: #a67c12; font-size: 7.5pt; font-weight: 700; letter-spacing: .6px; }
+
+    @media screen {
+      body { max-width: 210mm; margin: 24px auto; padding: 13mm 14mm; box-shadow: 0 6px 30px rgba(0,0,0,.12); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div>
+      <h1 class="name">MOHAMED NALEEM</h1>
+      <p class="title">Senior Full Stack Developer &nbsp;|&nbsp; Angular &middot; React &middot; Node.js &middot; MERN Stack</p>
+    </div>
+    <ul class="contact">
+      <li><b>Email</b>&nbsp; <a href="mailto:mohamednaleem90@gmail.com">mohamednaleem90@gmail.com</a></li>
+      <li><b>Phone</b>&nbsp; <a href="tel:+919677931974">+91 96779 31974</a> / <a href="tel:+918248778405">+91 82484 78405</a></li>
+      <li><b>LinkedIn</b>&nbsp; <a href="https://www.linkedin.com/in/mohamed-naleem-5b4591106/">linkedin.com/in/mohamed-naleem-5b4591106</a></li>
+      <li><b>Location</b>&nbsp; Chennai, Tamil Nadu, India</li>
+    </ul>
+  </header>
+
+  <section>
+    <h2>Professional Summary</h2>
+    <p class="summary">
+      Senior Full Stack Developer with <strong>12+ years of experience</strong> designing and delivering enterprise web applications
+      across <strong>banking, healthcare, telecom, and SaaS</strong>. Deep expertise in <strong>Angular</strong> and
+      <strong>React.js</strong> front-ends, backed by <strong>Node.js / Express.js REST APIs</strong>, <strong>MongoDB</strong> and
+      <strong>Oracle</strong> databases, and <strong>Azure DevOps CI/CD</strong>. Proven technical leader who has led front-end delivery,
+      reviewed and approved core-team code, mentored developers, and partnered directly with clients on requirements.
+      Currently building the <strong>DLL One Source</strong> banking platform at Cognizant using AI-assisted development with
+      <strong>GitHub Copilot</strong>.
+    </p>
+
+    <div class="highlights">
+      <div class="highlight"><strong>12+ Years</strong><span>Enterprise web &amp; API development</span></div>
+      <div class="highlight"><strong>4 Domains</strong><span>Banking &middot; Healthcare &middot; Telecom &middot; SaaS</span></div>
+      <div class="highlight"><strong>Technical Lead</strong><span>Code review, mentoring &amp; client delivery</span></div>
+      <div class="highlight"><strong>AI-Augmented</strong><span>GitHub Copilot certified engineer</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Core Technical Skills</h2>
+    <table class="skills">
+      <tr><th>Front-End</th><td>Angular, React.js, JavaScript (ES6+), TypeScript, HTML5, CSS3 / SCSS, Bootstrap, Angular Material, RxJS, NgRx, AG Grid, DevExtreme, Chart.js</td></tr>
+      <tr><th>Backend &amp; APIs</th><td>Node.js, Express.js, RESTful API design &amp; development, API integration, WebSocket, microservices exposure</td></tr>
+      <tr><th>Databases</th><td>MongoDB, Oracle Database, SQL, PL/SQL, query optimisation, data validation</td></tr>
+      <tr><th>DevOps &amp; Tools</th><td>Git, GitHub, Azure DevOps, Azure Pipelines, CI/CD, Docker, Jest, Strapi (Headless CMS), Form.io</td></tr>
+      <tr><th>AI-Assisted Engineering</th><td>GitHub Copilot, prompt engineering, LLM concepts, RAG, agentic workflows, responsible-AI guardrails</td></tr>
+      <tr><th>Practices</th><td>Agile / Scrum, code review, unit testing, production support, requirement analysis, client communication, mentoring</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Professional Experience</h2>
+
+    <article class="job">
+      <div class="job-head">
+        <h3 class="role">Senior Associate &ndash; Projects <span>| Cognizant Technology Solutions, Chennai</span></h3>
+        <span class="dates">Jul 2025 &ndash; Present</span>
+      </div>
+      <p class="meta">Client: DLL (De Lage Landen) &middot; Application: DLL One Source &middot; Banking &amp; Financial Services &middot; Role: MERN Stack Developer</p>
+      <ul>
+        <li>Develop and enhance responsive, component-driven user interfaces for <b>DLL One Source</b>, an enterprise banking platform supporting business workflows, using React.js, TypeScript, HTML5, CSS3 and Bootstrap.</li>
+        <li>Build and maintain <b>RESTful APIs</b> with Node.js and Express.js, integrating MongoDB and Oracle data sources for reliable end-to-end features.</li>
+        <li>Write and optimise <b>SQL queries</b>, support data validation, and collaborate on backend and database changes across environments.</li>
+        <li>Leverage <b>GitHub Copilot</b> for AI-assisted code generation, debugging, code-review support and documentation to accelerate delivery.</li>
+        <li>Contribute to Agile ceremonies, peer code reviews, defect resolution, release support and <b>Azure DevOps CI/CD</b> pipeline activities.</li>
+      </ul>
+      <p class="tech"><b>Tech:</b> React.js, Node.js, Express.js, MongoDB, Oracle, SQL, JavaScript, TypeScript, REST APIs, Azure DevOps, GitHub Copilot</p>
+    </article>
+
+    <article class="job">
+      <div class="job-head">
+        <h3 class="role">Technical Lead <span>| HCL Technologies, Chennai</span></h3>
+        <span class="dates">Oct 2022 &ndash; Jun 2025</span>
+      </div>
+      <p class="meta">Client: Abbott &middot; Projects: HF Cloud, DRx, EMR/EHR &middot; Healthcare &amp; Medical Applications</p>
+      <ul>
+        <li>Led front-end delivery of healthcare applications connecting <b>hospitals, clinicians and heart patients</b> for treatment and device-related workflows.</li>
+        <li>Designed and built <b>dynamic treatment plans</b>, reusable templates and dashboard modules for clinical users with Angular, NgRx and RxJS.</li>
+        <li>Delivered an <b>EHR dashboard</b> that unified multiple Abbott application views into a single portal for patient records.</li>
+        <li>Reviewed and approved core-team code, drove quality improvements, and partnered with client stakeholders on requirement clarification.</li>
+        <li>Worked with WebSocket-based real-time updates and Chart.js visualisations for clinical dashboards.</li>
+      </ul>
+      <p class="tech"><b>Tech:</b> Angular, Angular Material, TypeScript, RxJS, NgRx, Chart.js, WebSocket, HTML, CSS, Bootstrap</p>
+    </article>
+
+    <article class="job">
+      <div class="job-head">
+        <h3 class="role">Senior Software Developer &ndash; Team Leader <span>| Cloud Collab Technologies, Bangalore</span></h3>
+        <span class="dates">Mar 2021 &ndash; Sep 2022</span>
+      </div>
+      <p class="meta">Client: Mavenir Systems &middot; Telecom / Customer Self-Service</p>
+      <ul>
+        <li>Led UI development of <b>eCommerce and customer self-care portal</b> modules built from scratch, including responsive layouts and carousel experiences.</li>
+        <li>Implemented <b>dynamic, configurable forms</b> with Form.io and integrated enterprise UI components such as AG Grid.</li>
+        <li>Guided the team on Angular best practices and NgRx state management, with Strapi headless CMS and Docker-based environments.</li>
+      </ul>
+      <p class="tech"><b>Tech:</b> Angular, Angular Material, AG Grid, RxJS, NgRx, Form.io, Strapi, Docker, HTML, CSS, Bootstrap</p>
+    </article>
+
+    <article class="job">
+      <div class="job-head">
+        <h3 class="role">Software Developer II <span>| Zuora, Chennai</span></h3>
+        <span class="dates">Feb 2017 &ndash; Feb 2021</span>
+      </div>
+      <p class="meta">Subscription Billing &middot; Enterprise SaaS</p>
+      <ul>
+        <li>Developed and maintained enterprise web application features for a <b>subscription-billing SaaS platform</b> using Angular, Angular Material and DevExtreme.</li>
+        <li>Delivered UI enhancements, <b>unit tests with Jest</b>, and issue fixes across database-driven workflows backed by SQL.</li>
+      </ul>
+      <p class="tech"><b>Tech:</b> Angular, JavaScript, HTML, CSS, Bootstrap, Angular Material, DevExtreme, RxJS, Jest, Git, GitHub, SQL</p>
+    </article>
+
+    <article class="job">
+      <div class="job-head">
+        <h3 class="role">UI Developer <span>| Mind Bridges Technology, Chennai</span></h3>
+        <span class="dates">Jul 2014 &ndash; Jan 2017</span>
+      </div>
+      <ul>
+        <li>Built web application screens and <b>reusable UI components</b> using HTML, CSS, JavaScript, Bootstrap and AngularJS.</li>
+        <li>Supported implementation, defect fixing and user-interface improvements for client applications.</li>
+      </ul>
+      <p class="tech"><b>Tech:</b> HTML, CSS, JavaScript, Bootstrap, AngularJS</p>
+    </article>
+  </section>
+
+  <div class="columns">
+    <section>
+      <h2>Domain Experience</h2>
+      <ul class="domain-list">
+        <li><b>Banking &amp; Financial Services</b> &ndash; DLL One Source enterprise banking application</li>
+        <li><b>Healthcare</b> &ndash; Abbott HF Cloud, DRx and EMR/EHR platforms</li>
+        <li><b>Telecom</b> &ndash; Mavenir eCommerce and customer self-care portal</li>
+        <li><b>SaaS / Billing</b> &ndash; Zuora enterprise subscription-billing applications</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>AI-Native Engineering</h2>
+      <ul>
+        <li>Hands-on with GitHub Copilot for code suggestions, debugging, code-review support and documentation.</li>
+        <li>Exploring prompt engineering, LLM-based applications, RAG, agentic workflows and AI-enabled automation.</li>
+        <li>Applying responsible-AI guardrails while upskilling in AI-native engineering practices.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="columns">
+    <section>
+      <h2>Education</h2>
+      <div class="edu-row">
+        <div><b>B.E. Electrical &amp; Electronics Engineering</b><br><span class="edu-sub">Adhiyamaan College of Engineering, India</span></div>
+        <div style="text-align:right"><b>8.12 CGPA</b><br><span class="edu-sub">Aug 2009 &ndash; Apr 2013</span></div>
+      </div>
+      <p class="edu-sub" style="margin-top:5px">State Board XII &ndash; 79.02% &nbsp;&middot;&nbsp; State Board X &ndash; 79.75%</p>
+    </section>
+
+    <section>
+      <h2>Certifications &amp; Courses</h2>
+      <div class="cert"><span class="badge">CERTIFIED</span><span><b>GitHub Copilot</b> &ndash; AI-Augmented Software Engineer Professional Certification</span></div>
+      <div class="tags">
+        <span>Angular Material Design</span><span>Angular Unit Testing</span><span>RxJS</span><span>NgRx</span><span>Git &amp; GitHub</span><span>Strapi Headless CMS</span>
+      </div>
+    </section>
+  </div>
+
+  <section>
+    <h2>Professional Strengths</h2>
+    <ul>
+      <li>Works effectively both independently and in teams, across remote and in-person collaboration.</li>
+      <li>Strong client interaction, requirement clarification, problem-solving and end-to-end delivery ownership.</li>
+      <li>Continuously learning and upgrading skills across full-stack development, DevOps and AI-assisted engineering.</li>
+    </ul>
+  </section>
+
+</body>
+</html>

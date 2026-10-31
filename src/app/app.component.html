@@ -25,7 +25,7 @@
     </button>
   </div>
 
-  <span class="scroll-progress" [style.transform]="'scaleX(' + scrollProgress() + ')'" aria-hidden="true"></span>
+  <span class="scroll-progress" aria-hidden="true"></span>
 </header>
 
 <nav id="mobile-menu" class="mobile-menu" [class.is-open]="menuOpen()" aria-label="Mobile navigation">
@@ -34,11 +34,11 @@
       <small>0{{ index + 1 }}</small>{{ link.label }}
     </a>
   }
-  <a class="mobile-menu-cta" [href]="'mailto:' + email" (click)="closeMenu()">EMAIL ME <svg lucideMail size="15"></svg></a>
+  <a class="mobile-menu-cta" [href]="resumeUrl" download (click)="closeMenu()">DOWNLOAD CV <svg lucideDownload size="15"></svg></a>
 </nav>
 
-<a class="resume-rail" [href]="'mailto:' + email + '?subject=Resume%20request'" aria-label="Email me to request my resume">
-  <span>RESUME</span><svg lucideArrowUpRight size="15"></svg>
+<a class="resume-rail" [href]="resumeUrl" download aria-label="Download my resume as PDF">
+  <span>RESUME</span><svg lucideDownload size="15"></svg>
 </a>
 
 <div class="portfolio-shell" id="top">
@@ -52,7 +52,7 @@
         <p class="hero-role">SENIOR FULL STACK DEVELOPER <span>·</span> ANGULAR <span>·</span> REACT <span>·</span> NODE.JS</p>
         <p class="hero-status"><i></i> Currently Senior Associate at Cognizant · DLL One Source (Banking)</p>
 
-        <div class="code-stage" (pointermove)="onTiltMove($event)" (pointerleave)="onTiltLeave($event)">
+        <div class="code-stage">
           <div class="code-window">
             <div class="code-titlebar">
               <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -63,11 +63,13 @@
                 }
               </div>
             </div>
-            <div class="code-body" role="tabpanel" [attr.aria-label]="currentTab().file">
-              @for (tab of [currentTab()]; track tab.file) {
-                @for (line of tab.lines; track $index; let lineIndex = $index, last = $last) {
-                  <div class="code-line" [style.--line]="lineIndex"><span class="line-no" aria-hidden="true">{{ lineIndex + 1 }}</span><span class="line-text">@for (token of line; track $index) {<span [class]="'tok-' + token.kind">{{ token.text }}</span>}@if (last) {<span class="caret" aria-hidden="true"></span>}</span></div>
-                }
+            <div class="code-body">
+              @for (tab of codeTabs; track tab.file; let tabIndex = $index) {
+                <div role="tabpanel" [attr.aria-label]="tab.file" [hidden]="activeTab() !== tabIndex">
+                  @for (line of tab.lines; track $index; let lineIndex = $index, last = $last) {
+                    <div class="code-line" [style.--line]="lineIndex"><span class="line-no" aria-hidden="true">{{ lineIndex + 1 }}</span><span class="line-text">@for (token of line; track $index) {<span [class]="'tok-' + token.kind">{{ token.text }}</span>}@if (last) {<span class="caret" aria-hidden="true"></span>}</span></div>
+                  }
+                </div>
               }
             </div>
             <div class="code-statusbar">
@@ -82,12 +84,13 @@
         <p class="hero-summary">
           <span class="sr-only">I build secure, responsive enterprise applications across banking, healthcare, telecom, and SaaS.</span>
           <span aria-hidden="true">I build
-            @for (phrase of [currentPhrase()]; track phrase) { <span class="rotating-word">{{ phrase }}</span> }
+            <span class="rotator">@for (phrase of rotatingPhrases; track phrase) {<span class="rotating-word" [class.is-active]="currentPhrase() === phrase">{{ phrase }}</span>}</span>
           </span>
         </p>
         <div class="hero-actions">
           <a class="button button-primary" href="#work">EXPLORE MY WORK <svg lucideArrowUpRight size="16"></svg></a>
           <a class="button button-ghost" href="#contact">GET IN TOUCH <svg lucideMail size="16"></svg></a>
+          <a class="button button-ghost" [href]="resumeUrl" download>DOWNLOAD CV <svg lucideDownload size="16"></svg></a>
         </div>
         <div class="hero-companies">
           <span>EXPERIENCE ACROSS</span>
@@ -128,7 +131,7 @@
         </div>
         <div class="project-grid">
           @for (project of projects; track project.name; let index = $index) {
-            <article class="project-card spotlight reveal" [style.--reveal-delay]="(index % 2) * 120 + 'ms'" (pointermove)="onCardPointerMove($event)">
+            <article class="project-card spotlight reveal" [style.--reveal-delay]="(index % 2) * 120 + 'ms'">
               <div [class]="'project-visual ' + project.theme">
                 <div class="visual-topline"><span>PROJECT / 0{{ index + 1 }}</span><span class="visual-role">{{ project.role }}</span></div>
                 <div class="visual-body" aria-hidden="true">
@@ -221,7 +224,7 @@
         </div>
         <div class="skill-groups">
           @for (group of skillGroups; track group.title; let index = $index) {
-            <article class="skill-group card spotlight reveal" [style.--reveal-delay]="(index % 3) * 100 + 'ms'" (pointermove)="onCardPointerMove($event)">
+            <article class="skill-group card spotlight reveal" [style.--reveal-delay]="(index % 3) * 100 + 'ms'">
               <span class="skill-index">0{{ index + 1 }}</span>
               <span class="skill-icon">
                 @switch (group.icon) {
@@ -255,7 +258,7 @@
         </div>
         <div class="domain-grid">
           @for (domain of domains; track domain.name; let index = $index) {
-            <article class="domain-card card spotlight reveal" [style.--reveal-delay]="index * 90 + 'ms'" (pointermove)="onCardPointerMove($event)">
+            <article class="domain-card card spotlight reveal" [style.--reveal-delay]="index * 90 + 'ms'">
               <span class="skill-icon">
                 @switch (domain.icon) {
                   @case ('bank') { <svg lucideLandmark size="20"></svg> }
@@ -338,6 +341,7 @@
           <button type="button" class="button button-ghost" (click)="copyEmail()">
             @if (emailCopied()) { <svg lucideCheck size="16"></svg> COPIED } @else { <svg lucideCopy size="16"></svg> COPY EMAIL }
           </button>
+          <a class="button button-ghost" [href]="resumeUrl" download>DOWNLOAD CV <svg lucideDownload size="16"></svg></a>
         </div>
         <ul class="contact-details">
           <li><svg lucideMail size="15"></svg><a [href]="'mailto:' + email">{{ email }}</a></li>
@@ -369,7 +373,7 @@
         aria-label="Back to top" [attr.tabindex]="showBackToTop() ? 0 : -1">
   <svg class="progress-ring" viewBox="0 0 48 48" aria-hidden="true">
     <circle cx="24" cy="24" r="21" class="ring-track"></circle>
-    <circle cx="24" cy="24" r="21" class="ring-value" [attr.stroke-dashoffset]="ringCircumference * (1 - scrollProgress())" [attr.stroke-dasharray]="ringCircumference"></circle>
+    <circle cx="24" cy="24" r="21" class="ring-value" [attr.stroke-dasharray]="ringCircumference"></circle>
   </svg>
   <svg lucideArrowUp size="18"></svg>
 </button>
