@@ -59,7 +59,7 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
   },
   {
     topics: ['ai', 'copilot', 'llm', 'rag', 'agentic', 'prompt', 'certification', 'certified', 'certificate'],
-    answer: 'He holds the GitHub Copilot – AI-Augmented Software Engineer Professional Certification and uses Copilot daily for code suggestions, debugging, reviews and documentation. He is exploring prompt engineering, LLM applications, RAG, agentic workflows and responsible-AI guardrails.',
+    answer: 'He is Microsoft-certified in GitHub Copilot (earned August 2026, valid until August 2028, credential ID 182DB972C5EC046E) and also holds the GitHub Copilot – AI-Augmented Software Engineer Professional Certification. He uses Copilot daily for code suggestions, debugging, reviews and documentation, and is exploring prompt engineering, LLM applications, RAG, agentic workflows and responsible-AI guardrails.',
   },
   {
     topics: ['domain', 'domains', 'industries', 'industry', 'sectors'],
