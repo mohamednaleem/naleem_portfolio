@@ -1,20 +1,48 @@
-<div class="portfolio-shell">
-  <header class="site-header">
-    <a class="wordmark" href="#top" aria-label="Mohamed Naleem, back to top">MN</a>
-    <nav class="main-nav" aria-label="Main navigation">
-      <a href="#about"><span>ABOUT</span><span aria-hidden="true">ABOUT</span></a>
-      <a href="#work"><span>WORK</span><span aria-hidden="true">WORK</span></a>
-      <a class="nav-optional" href="#experience"><span>EXPERIENCE</span><span aria-hidden="true">EXPERIENCE</span></a>
-      <a class="nav-optional" href="#toolkit"><span>SKILLS</span><span aria-hidden="true">SKILLS</span></a>
-      <a href="#contact"><span>CONTACT</span><span aria-hidden="true">CONTACT</span></a>
-    </nav>
-  </header>
+<a class="skip-link" href="#main">Skip to content</a>
 
-  <a class="resume-rail" [href]="'mailto:' + email + '?subject=Resume%20request'" aria-label="Email me to request my resume">
-    <span>RESUME</span><svg lucideArrowUpRight size="15"></svg>
-  </a>
+<header class="site-header" [class.is-scrolled]="isScrolled()" [class.menu-open]="menuOpen()">
+  <a class="wordmark" href="#top" aria-label="Mohamed Naleem, back to top" (click)="closeMenu()">MN<span>.</span></a>
 
-  <main id="top">
+  <nav class="main-nav" aria-label="Main navigation">
+    @for (link of navLinks; track link.id) {
+      <a [href]="'#' + link.id" [class.is-active]="activeSection() === link.id" [attr.aria-current]="activeSection() === link.id ? 'true' : null">
+        <span class="nav-roll"><span>{{ link.label }}</span><span aria-hidden="true">{{ link.label }}</span></span>
+      </a>
+    }
+  </nav>
+
+  <div class="header-actions">
+    <button type="button" class="icon-button theme-toggle" (click)="toggleTheme()"
+            [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+            [attr.title]="theme() === 'dark' ? 'Light mode' : 'Dark mode'">
+      @if (theme() === 'dark') { <svg lucideSun size="17"></svg> } @else { <svg lucideMoon size="17"></svg> }
+    </button>
+    <a class="header-cta" href="#contact">HIRE ME</a>
+    <button type="button" class="icon-button menu-toggle" (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()" aria-controls="mobile-menu"
+            [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'">
+      @if (menuOpen()) { <svg lucideX size="18"></svg> } @else { <svg lucideMenu size="18"></svg> }
+    </button>
+  </div>
+
+  <span class="scroll-progress" [style.transform]="'scaleX(' + scrollProgress() + ')'" aria-hidden="true"></span>
+</header>
+
+<nav id="mobile-menu" class="mobile-menu" [class.is-open]="menuOpen()" aria-label="Mobile navigation">
+  @for (link of navLinks; track link.id; let index = $index) {
+    <a [href]="'#' + link.id" [class.is-active]="activeSection() === link.id" (click)="closeMenu()">
+      <small>0{{ index + 1 }}</small>{{ link.label }}
+    </a>
+  }
+  <a class="mobile-menu-cta" [href]="'mailto:' + email" (click)="closeMenu()">EMAIL ME <svg lucideMail size="15"></svg></a>
+</nav>
+
+<a class="resume-rail" [href]="'mailto:' + email + '?subject=Resume%20request'" aria-label="Email me to request my resume">
+  <span>RESUME</span><svg lucideArrowUpRight size="15"></svg>
+</a>
+
+<div class="portfolio-shell" id="top">
+  <main id="main">
     <section class="hero" id="about" aria-labelledby="hero-title">
       <div class="hero-glow hero-glow-one"></div>
       <div class="hero-glow hero-glow-two"></div>
@@ -24,36 +52,57 @@
         <p class="hero-role">SENIOR FULL STACK DEVELOPER <span>·</span> ANGULAR <span>·</span> REACT <span>·</span> NODE.JS</p>
         <p class="hero-status"><i></i> Currently Senior Associate at Cognizant · DLL One Source (Banking)</p>
 
-        <div class="portrait-stage" role="img" aria-label="Mohamed Naleem monogram in a digital illustration">
-          <div class="portrait-orbit orbit-outer"></div>
-          <div class="portrait-orbit orbit-inner"></div>
-          <div class="portrait-glow"></div>
-          <div class="portrait-card">
-            <span class="portrait-corner corner-top"></span>
-            <span class="portrait-corner corner-bottom"></span>
-            <span class="portrait-initials">MN</span>
-            <span class="portrait-caption">BUILDING ENTERPRISE WEB APPS</span>
+        <div class="code-stage" (pointermove)="onTiltMove($event)" (pointerleave)="onTiltLeave($event)">
+          <div class="code-window">
+            <div class="code-titlebar">
+              <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <div class="code-tabs" role="tablist" aria-label="Developer profile files">
+                @for (tab of codeTabs; track tab.file; let index = $index) {
+                  <button type="button" role="tab" class="code-tab" [class.is-active]="activeTab() === index"
+                          [attr.aria-selected]="activeTab() === index" (click)="selectTab(index)">{{ tab.file }}</button>
+                }
+              </div>
+            </div>
+            <div class="code-body" role="tabpanel" [attr.aria-label]="currentTab().file">
+              @for (tab of [currentTab()]; track tab.file) {
+                @for (line of tab.lines; track $index; let lineIndex = $index, last = $last) {
+                  <div class="code-line" [style.--line]="lineIndex"><span class="line-no" aria-hidden="true">{{ lineIndex + 1 }}</span><span class="line-text">@for (token of line; track $index) {<span [class]="'tok-' + token.kind">{{ token.text }}</span>}@if (last) {<span class="caret" aria-hidden="true"></span>}</span></div>
+                }
+              }
+            </div>
+            <div class="code-statusbar">
+              <span><i></i> Open to opportunities</span>
+              <span>{{ currentTab().language }} · UTF-8</span>
+            </div>
           </div>
-          <span class="float-label label-angular"><i>A</i> ANGULAR <b>·</b> REACT</span>
-          <span class="float-label label-years">12+ <small>YEARS IN TECH</small></span>
-          <span class="float-label label-react">NODE.JS <i>·</i> MONGODB <i>·</i> ORACLE</span>
-          <span class="portrait-scroll"><i></i> SCROLL TO EXPLORE</span>
+          <span class="float-badge badge-years" aria-hidden="true"><strong>12+</strong> years</span>
+          <span class="float-badge badge-stack" aria-hidden="true"><i>A</i> Angular · React · Node</span>
         </div>
 
-        <p class="hero-summary">Building secure, responsive enterprise applications across banking, healthcare, telecom, and SaaS.</p>
+        <p class="hero-summary">
+          <span class="sr-only">I build secure, responsive enterprise applications across banking, healthcare, telecom, and SaaS.</span>
+          <span aria-hidden="true">I build
+            @for (phrase of [currentPhrase()]; track phrase) { <span class="rotating-word">{{ phrase }}</span> }
+          </span>
+        </p>
         <div class="hero-actions">
-          <a class="hero-cta" href="#work">EXPLORE MY WORK <svg lucideArrowUpRight size="16"></svg></a>
-          <a class="hero-cta hero-cta-ghost" href="#contact">GET IN TOUCH <svg lucideMail size="16"></svg></a>
+          <a class="button button-primary" href="#work">EXPLORE MY WORK <svg lucideArrowUpRight size="16"></svg></a>
+          <a class="button button-ghost" href="#contact">GET IN TOUCH <svg lucideMail size="16"></svg></a>
+        </div>
+        <div class="hero-companies">
+          <span>EXPERIENCE ACROSS</span>
+          <ul>
+            @for (company of companies; track company) { <li>{{ company }}</li> }
+          </ul>
         </div>
       </div>
-      <div class="hero-bottomline"><span>CHENNAI, INDIA</span><span>ANGULAR · REACT · NODE.JS · MONGODB · ORACLE · AZURE DEVOPS</span></div>
     </section>
 
-    <section class="intro-section content-wrap section-pad" aria-labelledby="intro-title">
-      <div class="section-label"><span>01</span> A LITTLE ABOUT ME</div>
+    <section class="intro-section content-wrap section-pad" id="intro" aria-labelledby="intro-title">
+      <div class="section-label reveal"><span>01</span> A LITTLE ABOUT ME</div>
       <div class="intro-grid">
-        <h2 id="intro-title">Twelve years of building<br><em>things that work.</em></h2>
-        <div class="intro-copy">
+        <h2 id="intro-title" class="reveal">Twelve years of building<br><em>things that work.</em></h2>
+        <div class="intro-copy reveal">
           <p>I’m a Senior Full Stack Developer with 12+ years of experience across front-end, full-stack, and API development. I build responsive enterprise web applications, REST APIs, dashboards, and customer-facing portals with Angular, React.js, TypeScript, Node.js, Express.js, MongoDB, and Oracle.</p>
           <p>Today I work as a MERN stack developer at Cognizant on <strong>DLL One Source</strong>, a banking application, shipping through Azure DevOps CI/CD with GitHub Copilot-assisted development. Before that, I led front-end delivery for Abbott’s healthcare platforms as a Technical Lead at HCL.</p>
           <p>I care about clean, maintainable code, thoughtful code reviews, and clear communication with clients and teammates.</p>
@@ -61,34 +110,47 @@
         </div>
       </div>
       <div class="stat-row">
-        <div><strong>12<span>+</span></strong><small>YEARS IN SOFTWARE</small></div>
-        <div><strong>5</strong><small>COMPANIES</small></div>
-        <div><strong>4</strong><small>INDUSTRY DOMAINS</small></div>
-        <div><strong>Full<span>-</span>stack</strong><small>ANGULAR · REACT · NODE</small></div>
+        @for (stat of stats; track stat.label; let index = $index) {
+          <div class="reveal" [style.--reveal-delay]="index * 90 + 'ms'">
+            <strong>{{ stat.value }}<span>{{ stat.suffix }}</span></strong>
+            <small>{{ stat.label }}</small>
+          </div>
+        }
       </div>
     </section>
 
     <section class="work-section section-pad" id="work" aria-labelledby="work-title">
       <div class="content-wrap">
-        <div class="section-label"><span>02</span> SELECTED WORK</div>
-        <div class="section-heading">
+        <div class="section-label reveal"><span>02</span> SELECTED WORK</div>
+        <div class="section-heading reveal">
           <h2 id="work-title">A few things<br><em>I’ve helped build.</em></h2>
           <p>Enterprise products I’ve contributed to across banking, healthcare, telecom, and SaaS. Client work is described at a high level.</p>
         </div>
         <div class="project-grid">
           @for (project of projects; track project.name; let index = $index) {
-            <article class="project-card">
-              <div class="project-visual" [class]="'project-visual ' + project.theme">
-                <div class="visual-topline"><span>PROJECT / 0{{ index + 1 }}</span><span>{{ project.initials }}</span></div>
-                <div class="visual-interface" aria-hidden="true">
-                  <div class="interface-sidebar"><b>{{ project.initials }}</b><i></i><i></i><i></i></div>
-                  <div class="interface-main">
-                    <div class="interface-heading"><span></span><i></i></div>
-                    <div class="interface-cards"><i></i><i></i><i></i></div>
-                    <div class="interface-chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <article class="project-card spotlight reveal" [style.--reveal-delay]="(index % 2) * 120 + 'ms'" (pointermove)="onCardPointerMove($event)">
+              <div [class]="'project-visual ' + project.theme">
+                <div class="visual-topline"><span>PROJECT / 0{{ index + 1 }}</span><span class="visual-role">{{ project.role }}</span></div>
+                <div class="visual-body" aria-hidden="true">
+                  <span class="visual-icon">
+                    <i class="visual-ring"></i><i class="visual-ring ring-delay"></i>
+                    @switch (project.icon) {
+                      @case ('bank') { <svg lucideLandmark size="28"></svg> }
+                      @case ('heart') { <svg lucideHeartPulse size="28"></svg> }
+                      @case ('clinic') { <svg lucideStethoscope size="28"></svg> }
+                      @case ('dashboard') { <svg lucideLayoutDashboard size="28"></svg> }
+                      @case ('cart') { <svg lucideShoppingCart size="28"></svg> }
+                      @case ('billing') { <svg lucideReceipt size="28"></svg> }
+                    }
+                  </span>
+                  <div class="visual-flow">
+                    @for (step of project.flow; track step; let last = $last) {
+                      <span class="flow-step">{{ step }}</span>
+                      @if (!last) { <i class="flow-link"></i> }
+                    }
                   </div>
                 </div>
-                <span class="visual-index">0{{ index + 1 }}</span>
+                <span class="visual-watermark" aria-hidden="true">{{ project.initials }}</span>
               </div>
               <div class="project-info">
                 <p class="project-category">{{ project.category }}</p>
@@ -110,17 +172,17 @@
 
     <section class="experience-section section-pad" id="experience" aria-labelledby="experience-title">
       <div class="content-wrap">
-        <div class="section-label"><span>03</span> CAREER & EXPERIENCE</div>
-        <div class="section-heading">
+        <div class="section-label reveal"><span>03</span> CAREER &amp; EXPERIENCE</div>
+        <div class="section-heading reveal">
           <h2 id="experience-title">Always learning.<br><em>Always building.</em></h2>
           <p>From UI developer to technical lead to full-stack engineer—twelve years of growing scope, ownership, and impact.</p>
         </div>
         <div class="timeline">
           @for (job of experiences; track job.company) {
-            <article class="timeline-item">
+            <article class="timeline-item reveal">
               <div class="timeline-date">
                 {{ job.dates }}
-                @if (job.current) { <span class="current-badge">CURRENT</span> }
+                @if (job.current) { <span class="current-badge"><i></i>CURRENT</span> }
               </div>
               <div class="timeline-marker" [class.is-current]="job.current"><i></i></div>
               <div class="timeline-content">
@@ -130,7 +192,7 @@
                     <p class="company-name">{{ job.company }} <span>· {{ job.location }}</span></p>
                     @if (job.context) { <p class="company-context">{{ job.context }}</p> }
                   </div>
-                  <svg lucideBriefcaseBusiness size="18"></svg>
+                  <span class="role-icon"><svg lucideBriefcaseBusiness size="18"></svg></span>
                 </div>
                 <p class="role-summary">{{ job.summary }}</p>
                 <ul class="role-highlights">
@@ -152,14 +214,14 @@
 
     <section class="skills-section section-pad" id="toolkit" aria-labelledby="skills-title">
       <div class="content-wrap">
-        <div class="section-label"><span>04</span> TOOLKIT & TECHNOLOGIES</div>
-        <div class="section-heading">
+        <div class="section-label reveal"><span>04</span> TOOLKIT &amp; TECHNOLOGIES</div>
+        <div class="section-heading reveal">
           <h2 id="skills-title">The tools behind<br><em>the work.</em></h2>
           <p>Deep Angular and React experience, backed by Node.js APIs, relational and document databases, and modern delivery tooling.</p>
         </div>
         <div class="skill-groups">
           @for (group of skillGroups; track group.title; let index = $index) {
-            <article class="skill-group">
+            <article class="skill-group card spotlight reveal" [style.--reveal-delay]="(index % 3) * 100 + 'ms'" (pointermove)="onCardPointerMove($event)">
               <span class="skill-index">0{{ index + 1 }}</span>
               <span class="skill-icon">
                 @switch (group.icon) {
@@ -186,14 +248,14 @@
 
     <section class="domains-section section-pad" id="domains" aria-labelledby="domains-title">
       <div class="content-wrap">
-        <div class="section-label"><span>05</span> DOMAINS & AI-NATIVE ENGINEERING</div>
-        <div class="section-heading">
+        <div class="section-label reveal"><span>05</span> DOMAINS &amp; AI-NATIVE ENGINEERING</div>
+        <div class="section-heading reveal">
           <h2 id="domains-title">Industries I know.<br><em>Where I’m heading.</em></h2>
           <p>Hands-on delivery in four regulated and enterprise domains, with a growing focus on AI-assisted software engineering.</p>
         </div>
         <div class="domain-grid">
-          @for (domain of domains; track domain.name) {
-            <article class="domain-card">
+          @for (domain of domains; track domain.name; let index = $index) {
+            <article class="domain-card card spotlight reveal" [style.--reveal-delay]="index * 90 + 'ms'" (pointermove)="onCardPointerMove($event)">
               <span class="skill-icon">
                 @switch (domain.icon) {
                   @case ('bank') { <svg lucideLandmark size="20"></svg> }
@@ -207,7 +269,7 @@
             </article>
           }
         </div>
-        <article class="ai-card">
+        <article class="ai-card card reveal">
           <div class="ai-card-head">
             <span class="skill-icon"><svg lucideSparkles size="20"></svg></span>
             <div>
@@ -225,27 +287,27 @@
       </div>
     </section>
 
-    <section class="education-section section-pad" aria-labelledby="education-title">
+    <section class="education-section section-pad" id="education" aria-labelledby="education-title">
       <div class="content-wrap education-grid">
-        <div>
-          <div class="section-label"><span>06</span> EDUCATION & GROWTH</div>
+        <div class="education-intro reveal">
+          <div class="section-label"><span>06</span> EDUCATION &amp; GROWTH</div>
           <h2 id="education-title">The foundation<br><em>and what’s next.</em></h2>
         </div>
         <div class="education-content">
-          <article class="education-card">
+          <article class="education-card card reveal">
             <svg lucideGraduationCap size="21"></svg>
             <div><span>AUG 2009 — APR 2013</span><h3>Bachelor of Engineering</h3><p>Electrical and Electronics Engineering · Adhiyamaan College of Engineering</p></div>
             <strong>8.12 <small>CGPA</small></strong>
           </article>
-          <article class="education-card">
+          <article class="education-card card reveal">
             <svg lucideGraduationCap size="21"></svg>
             <div><span>SCHOOLING</span><h3>State Board</h3><p>Class XII · 79.02% &nbsp;|&nbsp; Class X · 79.75%</p></div>
           </article>
-          <article class="education-card">
+          <article class="education-card card reveal">
             <svg lucideAward size="21"></svg>
             <div><span>CERTIFICATION</span><h3>GitHub Copilot</h3><p>AI-Augmented Software Engineer Professional Certification</p></div>
           </article>
-          <div class="courses-block">
+          <div class="courses-block reveal">
             <h3>COURSES</h3>
             <div class="tag-list">
               @for (course of courses; track course) {
@@ -253,7 +315,7 @@
               }
             </div>
           </div>
-          <div class="courses-block">
+          <div class="courses-block reveal">
             <h3>PROFESSIONAL STRENGTHS</h3>
             <ul class="check-list">
               @for (strength of strengths; track strength) {
@@ -266,12 +328,17 @@
     </section>
 
     <section class="contact-section section-pad" id="contact" aria-labelledby="contact-title">
-      <div class="content-wrap contact-card">
+      <div class="content-wrap contact-card reveal">
         <div class="contact-glow"></div>
         <div class="section-label"><span>07</span> YOUR NEXT TEAMMATE?</div>
         <h2 id="contact-title">Let’s build something<br><em>worth using.</em></h2>
         <p>Open to senior full-stack and technical lead opportunities. I’d be glad to talk about your product and team.</p>
-        <a class="contact-button" [href]="'mailto:' + email">GET IN TOUCH <svg lucideMail size="16"></svg></a>
+        <div class="contact-actions">
+          <a class="button button-primary contact-button" [href]="'mailto:' + email">GET IN TOUCH <svg lucideMail size="16"></svg></a>
+          <button type="button" class="button button-ghost" (click)="copyEmail()">
+            @if (emailCopied()) { <svg lucideCheck size="16"></svg> COPIED } @else { <svg lucideCopy size="16"></svg> COPY EMAIL }
+          </button>
+        </div>
         <ul class="contact-details">
           <li><svg lucideMail size="15"></svg><a [href]="'mailto:' + email">{{ email }}</a></li>
           <li><svg lucidePhone size="15"></svg>
@@ -289,7 +356,22 @@
 
   <footer class="site-footer content-wrap">
     <a class="footer-mark" href="#top">MN<span>.</span></a>
-    <p>DESIGNED & DEVELOPED BY MOHAMED NALEEM WITH ANGULAR, TYPESCRIPT & SCSS.</p>
-    <div><a [href]="'mailto:' + email" aria-label="Email Mohamed"><svg lucideMail size="16"></svg></a><a [href]="linkedinUrl" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">IN</a><span>© {{ currentYear }}</span></div>
+    <p>DESIGNED &amp; DEVELOPED BY MOHAMED NALEEM WITH ANGULAR, TYPESCRIPT &amp; SCSS.</p>
+    <div>
+      <a [href]="'mailto:' + email" aria-label="Email Mohamed"><svg lucideMail size="16"></svg></a>
+      <a [href]="linkedinUrl" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">IN</a>
+      <span>© {{ currentYear }}</span>
+    </div>
   </footer>
 </div>
+
+<button type="button" class="back-to-top" [class.is-visible]="showBackToTop()" (click)="scrollToTop()"
+        aria-label="Back to top" [attr.tabindex]="showBackToTop() ? 0 : -1">
+  <svg class="progress-ring" viewBox="0 0 48 48" aria-hidden="true">
+    <circle cx="24" cy="24" r="21" class="ring-track"></circle>
+    <circle cx="24" cy="24" r="21" class="ring-value" [attr.stroke-dashoffset]="ringCircumference * (1 - scrollProgress())" [attr.stroke-dasharray]="ringCircumference"></circle>
+  </svg>
+  <svg lucideArrowUp size="18"></svg>
+</button>
+
+<div class="toast" [class.is-visible]="!!toast()" role="status" aria-live="polite">{{ toast() }}</div>

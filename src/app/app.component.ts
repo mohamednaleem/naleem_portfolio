@@ -1,25 +1,90 @@
-import { Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  LucideArrowUp,
   LucideArrowUpRight,
   LucideAward,
   LucideBrainCircuit,
   LucideBriefcaseBusiness,
+  LucideCheck,
   LucideCircleCheck,
   LucideCode,
+  LucideCopy,
   LucideDatabase,
   LucideGraduationCap,
   LucideHeartPulse,
   LucideLandmark,
+  LucideLayoutDashboard,
   LucideMail,
   LucideMapPin,
+  LucideMenu,
+  LucideMoon,
   LucidePhone,
   LucideRadioTower,
   LucideReceipt,
   LucideServer,
+  LucideShoppingCart,
   LucideSparkles,
+  LucideStethoscope,
+  LucideSun,
   LucideUsers,
   LucideWorkflow,
+  LucideX,
 } from '@lucide/angular';
+
+type Theme = 'dark' | 'light';
+type TokenKind = 'key' | 'string' | 'keyword' | 'number' | 'punct' | 'comment' | 'plain';
+
+interface CodeToken {
+  text: string;
+  kind: TokenKind;
+}
+
+interface CodeTab {
+  file: string;
+  language: string;
+  lines: CodeToken[][];
+}
+
+const THEME_STORAGE_KEY = 'naleem.theme';
+const THEME_COLORS: Record<Theme, string> = { dark: '#09080d', light: '#f8f6fc' };
+const TOKEN_PATTERN = /(\/\/.*$)|("[^"]*"(?=\s*:))|('[^']*'|"[^"]*")|\b(const|true|false)\b|\b(\d+)\b|([A-Za-z_$][\w$]*)(?=\s*:)|([{}[\]().,;:])/g;
+
+// Splits a line of code into tokens for lightweight, markup-free syntax highlighting.
+function tokenize(line: string): CodeToken[] {
+  const tokens: CodeToken[] = [];
+  let cursor = 0;
+
+  for (const match of line.matchAll(TOKEN_PATTERN)) {
+    const index = match.index ?? 0;
+    if (index > cursor) tokens.push({ text: line.slice(cursor, index), kind: 'plain' });
+
+    const kind: TokenKind = match[1] ? 'comment'
+      : match[2] || match[6] ? 'key'
+      : match[3] ? 'string'
+      : match[4] ? 'keyword'
+      : match[5] ? 'number'
+      : 'punct';
+    tokens.push({ text: match[0], kind });
+    cursor = index + match[0].length;
+  }
+
+  if (cursor < line.length) tokens.push({ text: line.slice(cursor), kind: 'plain' });
+  return tokens;
+}
+
+function codeTab(file: string, language: string, source: string[]): CodeTab {
+  return { file, language, lines: source.map(tokenize) };
+}
 
 interface Experience {
   role: string;
@@ -41,6 +106,9 @@ interface Project {
   technologies: string[];
   theme: string;
   initials: string;
+  role: string;
+  icon: 'bank' | 'heart' | 'clinic' | 'dashboard' | 'cart' | 'billing';
+  flow: string[];
 }
 
 interface SkillGroup {
@@ -59,30 +127,45 @@ interface Domain {
 @Component({
   selector: 'app-root',
   imports: [
+    LucideArrowUp,
     LucideArrowUpRight,
     LucideAward,
     LucideBrainCircuit,
     LucideBriefcaseBusiness,
+    LucideCheck,
     LucideCircleCheck,
     LucideCode,
+    LucideCopy,
     LucideDatabase,
     LucideGraduationCap,
     LucideHeartPulse,
     LucideLandmark,
+    LucideLayoutDashboard,
     LucideMail,
     LucideMapPin,
+    LucideMenu,
+    LucideMoon,
     LucidePhone,
     LucideRadioTower,
     LucideReceipt,
     LucideServer,
+    LucideShoppingCart,
     LucideSparkles,
+    LucideStethoscope,
+    LucideSun,
     LucideUsers,
     LucideWorkflow,
+    LucideX,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  private readonly document = inject(DOCUMENT);
+  private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private toastTimer?: ReturnType<typeof setTimeout>;
+
   readonly email = 'mohamednaleem90@gmail.com';
   readonly linkedinUrl = 'https://www.linkedin.com/in/mohamed-naleem-5b4591106/';
   readonly phones = [
@@ -90,6 +173,79 @@ export class AppComponent {
     { label: '+91 82484 78405', href: 'tel:+918248778405' },
   ];
   readonly currentYear = new Date().getFullYear();
+  readonly ringCircumference = 2 * Math.PI * 21;
+
+  readonly navLinks = [
+    { id: 'about', label: 'About' },
+    { id: 'work', label: 'Work' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'toolkit', label: 'Skills' },
+    { id: 'domains', label: 'Domains' },
+    { id: 'contact', label: 'Contact' },
+  ];
+
+  readonly stats = [
+    { value: '12', suffix: '+', label: 'YEARS IN SOFTWARE' },
+    { value: '5', suffix: '', label: 'COMPANIES' },
+    { value: '4', suffix: '', label: 'INDUSTRY DOMAINS' },
+    { value: 'Full', suffix: '-stack', label: 'ANGULAR · REACT · NODE' },
+  ];
+
+  readonly companies = ['Cognizant', 'DLL', 'HCL Technologies', 'Abbott', 'Mavenir', 'Zuora'];
+
+  readonly codeTabs: CodeTab[] = [
+    codeTab('naleem.ts', 'TypeScript', [
+      'const developer = {',
+      "  name: 'Mohamed Naleem',",
+      "  role: 'Senior Full Stack Developer',",
+      "  experience: '12+ years',",
+      "  stack: ['Angular', 'React', 'Node.js'],",
+      "  domains: ['Banking', 'Healthcare', 'SaaS'],",
+      "  location: 'Chennai, India',",
+      '  openToWork: true,',
+      '};',
+    ]),
+    codeTab('stack.json', 'JSON', [
+      '{',
+      '  "frontend": ["Angular", "React", "TypeScript"],',
+      '  "backend": ["Node.js", "Express", "REST"],',
+      '  "database": ["MongoDB", "Oracle", "SQL"],',
+      '  "devops": ["Azure DevOps", "Docker", "Git"],',
+      '  "ai": ["GitHub Copilot", "Prompting"]',
+      '}',
+    ]),
+    codeTab('career.ts', 'TypeScript', [
+      'const career = timeline()',
+      "  .at(2025, 'Cognizant')    // Senior Associate",
+      "  .at(2022, 'HCL Tech')     // Technical Lead",
+      "  .at(2021, 'CloudCollab')  // Team Leader",
+      "  .at(2017, 'Zuora')        // Software Dev II",
+      "  .at(2014, 'MindBridges')  // UI Developer",
+      '  .build();',
+    ]),
+  ];
+
+  readonly rotatingPhrases = [
+    'enterprise banking platforms.',
+    'healthcare applications.',
+    'REST APIs with Node.js.',
+    'data-rich dashboards.',
+    'customer self-service portals.',
+  ];
+
+  readonly theme = signal<Theme>(this.readInitialTheme());
+  readonly isScrolled = signal(false);
+  readonly scrollProgress = signal(0);
+  readonly showBackToTop = signal(false);
+  readonly activeSection = signal('about');
+  readonly menuOpen = signal(false);
+  readonly emailCopied = signal(false);
+  readonly toast = signal('');
+  private readonly phraseIndex = signal(0);
+  readonly currentPhrase = computed(() => this.rotatingPhrases[this.phraseIndex()]);
+  readonly activeTab = signal(0);
+  readonly currentTab = computed(() => this.codeTabs[this.activeTab()]);
+  private tabTimer?: ReturnType<typeof setInterval>;
 
   readonly experiences: Experience[] = [
     {
@@ -174,6 +330,9 @@ export class AppComponent {
       technologies: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Oracle'],
       theme: 'gold',
       initials: 'DLL',
+      role: 'Full Stack Developer',
+      icon: 'bank',
+      flow: ['React.js', 'Express API', 'MongoDB / Oracle'],
     },
     {
       name: 'HF Cloud',
@@ -183,6 +342,9 @@ export class AppComponent {
       technologies: ['Angular', 'RxJS', 'NgRx', 'Angular Material'],
       theme: 'mint',
       initials: 'HF',
+      role: 'Technical Lead',
+      icon: 'heart',
+      flow: ['Angular', 'NgRx Store', 'WebSocket'],
     },
     {
       name: 'DRx',
@@ -192,6 +354,9 @@ export class AppComponent {
       technologies: ['Angular', 'TypeScript', 'NgRx', 'Chart.js'],
       theme: 'lavender',
       initials: 'DR',
+      role: 'Technical Lead',
+      icon: 'clinic',
+      flow: ['Templates', 'Treatment Plans', 'Chart.js'],
     },
     {
       name: 'EMR / EHR dashboard',
@@ -201,6 +366,9 @@ export class AppComponent {
       technologies: ['Angular', 'Angular Material', 'RxJS'],
       theme: 'blue',
       initials: 'EHR',
+      role: 'Technical Lead',
+      icon: 'dashboard',
+      flow: ['Abbott Apps', 'Unified Portal', 'Patient Records'],
     },
     {
       name: 'eCommerce & self-care',
@@ -210,6 +378,9 @@ export class AppComponent {
       technologies: ['Angular', 'Form.io', 'AG Grid', 'Strapi'],
       theme: 'peach',
       initials: 'CX',
+      role: 'Team Leader',
+      icon: 'cart',
+      flow: ['Angular', 'Form.io', 'Strapi CMS'],
     },
     {
       name: 'Subscription billing UI',
@@ -219,6 +390,9 @@ export class AppComponent {
       technologies: ['Angular', 'DevExtreme', 'RxJS', 'Jest'],
       theme: 'slate',
       initials: 'ZU',
+      role: 'Software Developer II',
+      icon: 'billing',
+      flow: ['Angular', 'DevExtreme', 'Billing APIs'],
     },
   ];
 
@@ -289,4 +463,173 @@ export class AppComponent {
     'Takes ownership of delivery, from build through release and production support.',
     'Continuously upskilling across full-stack, DevOps, and AI-assisted engineering.',
   ];
+
+  constructor() {
+    this.applyTheme(this.theme());
+
+    afterNextRender(() => {
+      this.onWindowScroll();
+      this.observeReveals();
+      this.observeSections();
+      this.startPhraseRotation();
+    });
+
+    this.destroyRef.onDestroy(() => {
+      clearTimeout(this.toastTimer);
+      clearInterval(this.tabTimer);
+    });
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    const view = this.document.defaultView;
+    if (!view) return;
+
+    const scrollTop = view.scrollY;
+    const scrollable = this.document.documentElement.scrollHeight - view.innerHeight;
+
+    this.isScrolled.set(scrollTop > 24);
+    this.showBackToTop.set(scrollTop > 600);
+    this.scrollProgress.set(scrollable > 0 ? Math.min(1, scrollTop / scrollable) : 0);
+  }
+
+  @HostListener('document:keydown.escape')
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+  }
+
+  toggleTheme(): void {
+    const next: Theme = this.theme() === 'dark' ? 'light' : 'dark';
+    this.theme.set(next);
+    this.applyTheme(next);
+
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch (error) {
+      console.warn('Theme preference could not be saved.', error);
+    }
+  }
+
+  scrollToTop(): void {
+    this.document.defaultView?.scrollTo({ top: 0, behavior: this.prefersReducedMotion() ? 'auto' : 'smooth' });
+  }
+
+  async copyEmail(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.email);
+      this.emailCopied.set(true);
+      this.showToast('Email address copied to clipboard');
+    } catch {
+      this.showToast(`Copy unavailable \u2014 email: ${this.email}`);
+    }
+  }
+
+  onCardPointerMove(event: PointerEvent): void {
+    const card = event.currentTarget as HTMLElement;
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+    card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+  }
+
+  selectTab(index: number): void {
+    clearInterval(this.tabTimer);
+    this.activeTab.set(index);
+  }
+
+  onTiltMove(event: PointerEvent): void {
+    if (event.pointerType !== 'mouse' || this.prefersReducedMotion()) return;
+
+    const stage = event.currentTarget as HTMLElement;
+    const rect = stage.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    stage.style.setProperty('--ry', `${(x * 10).toFixed(2)}deg`);
+    stage.style.setProperty('--rx', `${(-y * 8).toFixed(2)}deg`);
+  }
+
+  onTiltLeave(event: PointerEvent): void {
+    const stage = event.currentTarget as HTMLElement;
+    stage.style.setProperty('--ry', '0deg');
+    stage.style.setProperty('--rx', '0deg');
+  }
+
+  private readInitialTheme(): Theme {
+    return this.document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  }
+
+  private applyTheme(theme: Theme): void {
+    const root = this.document.documentElement;
+    root.setAttribute('data-theme', theme);
+    this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[theme]);
+  }
+
+  private showToast(message: string): void {
+    this.toast.set(message);
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => {
+      this.toast.set('');
+      this.emailCopied.set(false);
+    }, 2600);
+  }
+
+  private prefersReducedMotion(): boolean {
+    return this.document.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches ?? false;
+  }
+
+  private observeReveals(): void {
+    const elements = Array.from(this.host.nativeElement.querySelectorAll<HTMLElement>('.reveal'));
+
+    if (this.prefersReducedMotion() || typeof IntersectionObserver === 'undefined') {
+      elements.forEach((element) => element.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    elements.forEach((element) => observer.observe(element));
+    this.destroyRef.onDestroy(() => observer.disconnect());
+  }
+
+  private observeSections(): void {
+    if (typeof IntersectionObserver === 'undefined') return;
+
+    const navIds = new Set(this.navLinks.map((link) => link.id));
+    const sections = Array.from(this.host.nativeElement.querySelectorAll<HTMLElement>('section[id]'))
+      .filter((section) => navIds.has(section.id));
+
+    // A thin band near the upper-middle of the viewport decides the active section.
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) this.activeSection.set(entry.target.id);
+      }
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    sections.forEach((section) => observer.observe(section));
+    this.destroyRef.onDestroy(() => observer.disconnect());
+  }
+
+  private startPhraseRotation(): void {
+    if (this.prefersReducedMotion()) return;
+
+    const timer = setInterval(() => {
+      this.phraseIndex.update((index) => (index + 1) % this.rotatingPhrases.length);
+    }, 2800);
+    this.destroyRef.onDestroy(() => clearInterval(timer));
+
+    // Auto-cycles the code tabs until the visitor picks one.
+    this.tabTimer = setInterval(() => {
+      this.activeTab.update((index) => (index + 1) % this.codeTabs.length);
+    }, 6500);
+  }
 }

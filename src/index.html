@@ -10,6 +10,18 @@
   <meta property="og:description" content="12+ years building enterprise web applications with Angular, React, Node.js, MongoDB, and Oracle.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#09080d">
+  <script>
+    // Apply the saved or system theme before first paint to avoid a flash.
+    (function () {
+      var theme = 'dark';
+      try {
+        var saved = localStorage.getItem('naleem.theme');
+        if (saved === 'light' || saved === 'dark') { theme = saved; }
+        else if (window.matchMedia('(prefers-color-scheme: light)').matches) { theme = 'light'; }
+      } catch (e) { /* storage unavailable: keep default */ }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

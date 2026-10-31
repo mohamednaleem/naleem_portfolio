@@ -54,4 +54,29 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('a[href*="linkedin.com/in/mohamed-naleem"]'))
       .not.toBeNull();
   });
+
+  it('should toggle between dark and light themes', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const app = fixture.componentInstance;
+    const initial = app.theme();
+
+    app.toggleTheme();
+    const toggled = initial === 'dark' ? 'light' : 'dark';
+    expect(app.theme()).toBe(toggled);
+    expect(document.documentElement.getAttribute('data-theme')).toBe(toggled);
+
+    app.toggleTheme();
+    expect(app.theme()).toBe(initial);
+  });
+
+  it('should render the theme toggle, mobile menu toggle, and back-to-top button', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('.theme-toggle')).not.toBeNull();
+    expect(compiled.querySelector('.menu-toggle')?.getAttribute('aria-expanded')).toBe('false');
+    expect(compiled.querySelector('.back-to-top')).not.toBeNull();
+  });
 });
