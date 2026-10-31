@@ -226,6 +226,7 @@ export class AppComponent {
   readonly email = 'mohamednaleem90@gmail.com';
   readonly resumeUrl = 'Mohamed_Naleem_Resume.pdf';
   readonly repoUrl = 'https://github.com/mohamednaleem/naleem_portfolio';
+  readonly certificationUrl = 'https://learn.microsoft.com/en-us/users/naleemmohamedcognizant-5200/credentials?tab=credentials-tab';
   readonly labSourceUrl = 'https://github.com/mohamednaleem/naleem_portfolio/tree/main/src/app/features/heart-monitor';
   /** Set to e.g. 'profile.jpg' after adding the photo to public/ to show it in the About section. */
   readonly photoUrl: string | null = null;

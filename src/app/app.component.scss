@@ -914,6 +914,24 @@ kbd {
   p { margin: 0; color: var(--text-2); font-size: 13px; line-height: 1.6; }
   > strong { color: var(--accent); font: 500 20px Georgia, serif; }
   > strong small { color: var(--text-3); font: 700 9px 'Segoe UI', sans-serif; }
+
+  .verify-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
+    border-radius: 999px;
+    color: var(--success);
+    background: color-mix(in srgb, var(--success) 10%, transparent);
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    transition: background-color .2s;
+
+    &:hover { background: color-mix(in srgb, var(--success) 18%, transparent); }
+  }
 }
 
 .courses-block {
@@ -1119,7 +1137,8 @@ kbd {
   padding-top: 24px;
   border-top: 1px solid var(--border);
 
-  h3 { margin: 0 0 16px; color: var(--text); font: 500 20px Georgia, serif; }
+  h3 { margin: 0 0 6px; color: var(--text); font: 500 20px Georgia, serif; }
+  .form-intro { margin: 0 0 16px; color: var(--text-2); font-size: 13.5px; }
 }
 
 /* ---------- Footer ---------- */

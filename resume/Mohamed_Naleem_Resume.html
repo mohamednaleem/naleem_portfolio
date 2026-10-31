@@ -57,6 +57,7 @@
     }
 
     .contact {
+      flex: 0 1 auto;
       display: grid;
       gap: 2px;
       margin: 0;
@@ -68,6 +69,12 @@
     }
 
     .contact b { color: var(--accent); font-weight: 700; }
+    .contact li, .name { white-space: nowrap; }
+    .header > div:first-child { flex: 1; }
+
+    .qr { display: grid; justify-items: center; gap: 2px; flex: 0 0 auto; }
+    .qr img { display: block; width: 64px; height: 64px; padding: 3px; border: 1px solid var(--rule); border-radius: 4px; }
+    .qr span { color: var(--muted); font-size: 6.8pt; font-weight: 600; }
 
     /* Sections */
     section { margin-top: 10px; }
@@ -159,6 +166,7 @@
     }
 
     .cert b { color: var(--ink); }
+    .cert .verify { color: var(--accent); font-weight: 700; text-decoration: underline; }
     .badge { flex: 0 0 auto; padding: 1px 6px; border-radius: 8px; color: #fff; background: #a67c12; font-size: 7.5pt; font-weight: 700; letter-spacing: .6px; }
 
     @media screen {
@@ -180,6 +188,10 @@
       <li><b>Portfolio</b>&nbsp; <a href="https://mohamednaleem.github.io/naleem_portfolio/">mohamednaleem.github.io/naleem_portfolio</a></li>
       <li><b>Location</b>&nbsp; Chennai, Tamil Nadu, India</li>
     </ul>
+    <a class="qr" href="https://mohamednaleem.github.io/naleem_portfolio/">
+      <img src="../branding/portfolio-qr.svg" alt="QR code linking to Mohamed Naleem's portfolio" width="64" height="64">
+      <span>Scan for portfolio</span>
+    </a>
   </header>
 
   <section>
@@ -198,7 +210,7 @@
       <div class="highlight"><strong>12+ Years</strong><span>Enterprise web &amp; API development</span></div>
       <div class="highlight"><strong>4 Domains</strong><span>Banking &middot; Healthcare &middot; Telecom &middot; SaaS</span></div>
       <div class="highlight"><strong>Technical Lead</strong><span>Code review, mentoring &amp; client delivery</span></div>
-      <div class="highlight"><strong>AI-Augmented</strong><span>Microsoft-certified in GitHub Copilot</span></div>
+      <div class="highlight"><strong>AI-Augmented</strong><span>Microsoft-certified: GitHub Copilot (GH-300)</span></div>
     </div>
   </section>
 
@@ -322,7 +334,7 @@
 
     <section>
       <h2>Certifications &amp; Courses</h2>
-      <div class="cert"><span class="badge">MICROSOFT</span><span><b>GitHub Copilot</b> &ndash; Microsoft Certification (Aug 2026 &ndash; Aug 2028) &middot; Credential ID 182DB972C5EC046E</span></div>
+      <div class="cert"><span class="badge">MICROSOFT</span><span><b>GitHub Copilot (GH-300)</b> &ndash; Microsoft Certification (Aug 2026 &ndash; Aug 2028) &middot; Credential ID 182DB972C5EC046E &middot; <a class="verify" href="https://learn.microsoft.com/en-us/users/naleemmohamedcognizant-5200/credentials?tab=credentials-tab">Verify</a></span></div>
       <div class="cert"><span class="badge">CERTIFIED</span><span><b>GitHub Copilot</b> &ndash; AI-Augmented Software Engineer Professional Certification</span></div>
       <div class="tags">
         <span>Angular Material Design</span><span>Angular Unit Testing</span><span>RxJS</span><span>NgRx</span><span>Git &amp; GitHub</span><span>Strapi Headless CMS</span>

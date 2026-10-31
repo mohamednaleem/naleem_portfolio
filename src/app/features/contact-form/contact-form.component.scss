@@ -9,6 +9,7 @@
   gap: 7px;
 
   > span { color: var(--text-2); font-size: 12px; font-weight: 700; letter-spacing: .4px; }
+  > span em { color: var(--text-4); font-style: normal; font-weight: 500; }
 
   input, textarea {
     width: 100%;

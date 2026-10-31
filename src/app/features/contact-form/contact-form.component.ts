@@ -22,6 +22,7 @@ export class ContactFormComponent {
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(80)]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(120)]],
+    company: ['', [Validators.maxLength(120)]],
     message: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
   });
 
@@ -36,11 +37,11 @@ export class ContactFormComponent {
       return;
     }
 
-    const { name, email, message } = this.form.getRawValue();
+    const { name, email, company, message } = this.form.getRawValue();
 
     if (!this.endpoint()) {
-      const subject = encodeURIComponent(`Portfolio enquiry from ${name}`);
-      const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
+      const subject = encodeURIComponent(`Opportunity from ${name}${company ? ` (${company})` : ''}`);
+      const body = encodeURIComponent(`${message}\n\n— ${name}${company ? `, ${company}` : ''} (${email})`);
       window.location.href = `mailto:${this.email()}?subject=${subject}&body=${body}`;
       this.status.set('sent');
       return;
@@ -51,7 +52,7 @@ export class ContactFormComponent {
       const response = await fetch(this.endpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({ name, email, company, message }),
       });
       if (!response.ok) throw new Error(`Form endpoint responded with ${response.status}`);
 
