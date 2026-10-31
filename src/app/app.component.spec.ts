@@ -32,6 +32,8 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const content = compiled.textContent ?? '';
 
+    expect(content).toContain('Cognizant Technology Solutions');
+    expect(content).toContain('DLL One Source');
     expect(content).toContain('HCL Technologies');
     expect(content).toContain('Cloud Collab Technologies');
     expect(content).toContain('HF Cloud');
